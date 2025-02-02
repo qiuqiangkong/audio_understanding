@@ -1,8 +1,8 @@
 ---
 sample_rate: 16000
-clip_duration: 10.
+clip_duration: 5.
 max_question_len: 50
-max_answering_len: 990
+max_answering_len: 1000
 fps: 100
 
 train_datasets:
@@ -14,14 +14,15 @@ test_datasets:
     MAESTRO:
         root: "/datasets/maestro-v3.0.0"
         split: "test"
+
+midi_to_tokens: MIDI2Tokens
         
 audio_encoder:
-    name: Whisper
-    trainable: False
+    name: PianoTranscriptionCRnn
+    trainable: True
 
 tokenizer:
-    name: Bert
-    trainable: False
+    name: BertMIDI
 
 llm:
     name: Llama
@@ -35,7 +36,8 @@ llm:
     
 train:
     device: "cuda"
-    num_workers: 16 
+    num_workers: 16
+    remove_padded_columns: True
     loss: ce_loss
     optimizer: AdamW
     lr: 1e-4

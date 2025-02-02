@@ -29,7 +29,14 @@ class Whisper(nn.Module):
         self.model = whisper.load_model("base")
         self.latent_dim = 512
 
-    def encode(self, audio: torch.Tensor) -> torch.Tensor:
+        # Fix for parallel training
+        self.model.register_buffer(
+            name="alignment_heads", 
+            tensor=self.model.get_buffer("alignment_heads").to_dense(), 
+            persistent=False
+        )
+
+    def encode(self, audio: torch.Tensor, train_mode: bool = True) -> torch.Tensor:
         r"""Extract audio latent.
 
         Args:
@@ -57,13 +64,13 @@ class Whisper(nn.Module):
         # Mel spectrogram
         mel = whisper.log_mel_spectrogram(audio)  # (b, f, t)
 
-        if self.trainable:
+        if self.trainable and train_mode:
             self.model.train()
         else:
             self.model.eval()
 
         # Forward
-        with torch.set_grad_enabled(self.trainable):
+        with torch.set_grad_enabled(self.trainable and train_mode):
             latent = self.model.encoder(mel)  # (b, t, d)
 
         # Clip to original length

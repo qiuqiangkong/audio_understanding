@@ -13,86 +13,36 @@ from audidata.io.crops import RandomCrop, StartCrop
 from audidata.transforms import Mono
 from audidata.datasets import MAESTRO
 
-# from data.text_normalization import TextNormalization
-# from data.text_tokenization import BertTokenizer
-# from train import get_audio_encoder, get_llm_decoder, get_audio_latent
-
 from audio_understanding.utils import parse_yaml
 from train import get_audio_encoder, get_tokenizer, get_llm
 
 
 def inference(args):
 
-    # Arguments
-
     # Arguments and parameters
     config_yaml = args.config_yaml
     ckpt_path = args.ckpt_path
-
-    configs = parse_yaml(config_yaml)
-    sr = configs["sample_rate"]
+    audio_path = args.audio_path
+    device = "cuda"
 
     # Default parameters
-    device = "cuda"
-    split = "test"
-    max_length = 500  # Max caption length
-    # clip_duration = 10.  # Audio clip duration
+    configs = parse_yaml(config_yaml)
+    sr = configs["sample_rate"]
     clip_duration = configs["clip_duration"]
     clip_samples = round(clip_duration * sr)
-    # audio_encoder_name = "Cnn14"
-    # llm_decoder_name = "Llama"
-    num_samples = 1
     temperature = 1.0
-    # top_k = 200
-    # top_k = 20 # ASR
-    top_k = 1
-
-    # Dataset
-    root = "/datasets/clotho"
-
-    # Audio Cropper
-    # crop = RandomCrop(clip_duration=clip_duration, end_pad=0.)
-
-    # # Caption transforms
-    # target_transform = [
-    #     TextNormalization(),  # Remove punctuations
-    #     BertTokenizer(max_length=max_length)  # Convert captions to token IDs
-    # ]
-    # tokenizer = target_transform[1].tokenizer
-    # start_token_id = tokenizer.cls_token_id  # 101
-    # text_vocab_size = tokenizer.vocab_size  # 30,522
-
-    # # # Dataset
-    # meta_dict = get_clotho_meta(root, split)
-    # audios_num = len(meta_dict["audio_name"])
-
-    # # Load audio encoder
-    # audio_encoder, audio_latent_dim = get_audio_encoder(model_name=audio_encoder_name)
-    # audio_encoder.to(device)
-
+    
+    # Load checkpoint
     ckpt = torch.load(ckpt_path)
 
-    root = "/datasets/maestro-v3.0.0"
-    dataset = MAESTRO(
-        root=root,
-        split="test",
-        sr=sr,
-        crop=StartCrop(clip_duration=10.),
-        transform=Mono(),
-        load_target=False,
-    )
-
-    # Audio encoder: Used to convert audio into latent
+    # Audio encoder
     audio_encoder = get_audio_encoder(
         configs=configs, 
         ckpt_path=ckpt_path
     ).to(device)
     
-    # Tokenizer: Used to convert text or audio codes into IDs and vice versa
-    tokenizer = get_tokenizer(
-        configs=configs, 
-        ckpt_path=ckpt_path
-    ).to(device)
+    # Tokenizer for converting text into IDs and vice versa
+    tokenizer = get_tokenizer(configs=configs)
     
     # LLM decoder
     llm = get_llm(
@@ -102,130 +52,93 @@ def inference(args):
         ckpt_path=ckpt_path
     ).to(device)
 
-    llm.to(device)
+    # Load the begining part of audio
+    audio, _ = librosa.load(path=audio_path, sr=sr, mono=True)
+    audio = audio[0 : clip_samples]
+    audio = librosa.util.fix_length(data=audio, size=clip_samples, axis=0)
+    audio = torch.Tensor(audio[None, None, :]).to(device)  # shape: (b, c, t)
 
-    # Text start token
+    # Encode audio into latent
+    audio_latent = audio_encoder.encode(audio=audio)  # shape: (b, t, d)
+
+    question = get_question(config_yaml)  # str
+    batch_question = [question]  # shape: (b,)
+
+    # Tokenize question text to IDs
+    question_ids = tokenizer.texts_to_ids(
+        texts=batch_question, 
+        fix_length=configs["max_question_len"]
+    ).to(device)  # shape: (b, t)
+
+    # Tokenize answering text to IDs
     start_token_id = tokenizer.cls_token_id  # 101
-    caption_ids = torch.LongTensor([[start_token_id]]).to(device)  # (b, 1)
+    answering_ids = torch.LongTensor([[start_token_id]]).to(device)  # (b, 1)
 
-    #
-    audio_paths = dataset.meta_dict["audio_path"]
-    # audio_paths = dataset.meta_dict["audio_path"][100:]
-    # audio_paths = 
+    # Prepare inputs
+    seqs = [audio_latent, question_ids, answering_ids]
+    seq_types = ["audio", "id", "id"]
 
-    # audio_paths = ["/datasets/LJSpeech-1.1/wavs/LJ049-0022.wav"]
-
-    # audio_paths = ["/datasets/clotho/clotho_audio_evaluation/01862 heavy machine working.wav"]
-    # audio_paths = ["/datasets/clotho/clotho_audio_evaluation/Footsteps on snow.wav"]
-    # audio_paths = ["/datasets/librispeech/test-other/1688/142285/1688-142285-0000.flac"] 
-
-    for audio_path in audio_paths:
-
-        audio, _ = librosa.load(path=audio_path, sr=sr, mono=True)
-        audio = audio[0 : clip_samples]
-        audio = librosa.util.fix_length(data=audio, size=clip_samples, axis=0)
-
-        # Move data to device
-        audio = torch.Tensor(audio[None, None, :]).to(device)  # shape: (b, c, t_audio)
-
-        # Encode audio into discrete codes
-        audio = audio.to(device)
-        audio_latent = audio_encoder.encode(audio=audio)  # shape: (b, t_code, q)
-
-        seqs = [audio_latent, caption_ids]
-        seq_types = ["audio", "id"]
-
-        with torch.no_grad():
-            llm.eval()
-
-            output_seqs = llm.generate(
-                seqs=seqs,
-                seq_types=seq_types,
-                max_new_ids=max_length, 
-                temperature=temperature, 
-                top_k=top_k
-            )
-
-        import pickle
-        pickle.dump(output_seqs[1][0].cpu().numpy(), open("_zz.pkl", "wb"))
-
-        import soundfile
-        soundfile.write(file="_zz.wav", data=audio.cpu().numpy()[0,0], samplerate=sr)
-        
-        print(tokenizer.tok.convert_ids_to_tokens(output_seqs[1][0].cpu().numpy())) 
-
-        from IPython import embed; embed(using=False); os._exit(0)
-        
-        print("------------")
-        print("Audio path: {}".format(audio_path))
-        for caption in captions:
-            print("Ground truth: {}".format(caption))
-        # soundfile.write(file="_zz.wav", data=audio[0][0].cpu().numpy(), samplerate=sr)
-        
-        # Extract audio embeddings
-        audio_latent = get_audio_latent(
-            model_name=audio_encoder_name, 
-            model=audio_encoder, audio=audio
+    with torch.no_grad():
+        llm.eval()
+        output_seqs = llm.generate(
+            seqs=seqs,
+            seq_types=seq_types,
+            max_new_ids=configs["max_answering_len"], 
+            # max_new_ids=300,
+            temperature=temperature, 
+            top_k=get_top_k(config_yaml)
         )
 
-        # Sample    
-        for n in range(num_samples):
+    answering_ids = output_seqs[2][0]  # shape: (t)
 
-            # Combine audio embeddings and text ids
-            input_seqs = [audio_latent, text_ids]
-            seq_types = ["audio", "text"]
-
-            with torch.no_grad():
-                llm_decoder.eval()
-            
-                outputs = llm_decoder.generate(
-                    seqs=input_seqs,
-                    seq_types=seq_types,
-                    max_new_tokens=max_length, 
-                    temperature=temperature, 
-                    top_k=top_k
-                )
-                # list of Tensor
-
-            sampled_text_ids = outputs[-1][0].cpu().numpy()
-            strings = tokenizer.decode(token_ids=sampled_text_ids, skip_special_tokens=True)
-            print("Prediction: {}".format(strings))
-            
-        if audio_idx == 5:
-            break
+    answering_texts = convert_ids_to_texts(config_yaml, tokenizer, answering_ids)
+    print("Output: {}".format(answering_texts))
 
 
-def get_clotho_meta(root: str, split: str) -> dict:
-    r"""Load Clotho audio paths and captions."""
-    if split == "train":
-        meta_csv = Path(root, "clotho_captions_development.csv")
-        audios_dir = Path(root, "clotho_audio_development")
+def get_top_k(config_yaml: str) -> int:
 
-    elif split == "test":
-        meta_csv = Path(root, "clotho_captions_evaluation.csv")
-        audios_dir = Path(root, "clotho_audio_evaluation")
+    if Path(config_yaml).stem in ["asr_librispeech"]:
+        return 1
+
+    elif Path(config_yaml).stem in ["piano_transcription_maestro"]:
+        return 20
+
+    elif Path(config_yaml).stem in ["audio_caption_clotho"]:
+        return 100
 
     else:
-        raise ValueError(split)
+        print("Using default top_k=100")
+        return 100
 
-    meta_dict = {
-        "audio_name": [],
-        "audio_path": [],
-        "captions": []
-    }
+def get_question(config_yaml: str) -> str:
+    
+    if Path(config_yaml).stem in ["asr_librispeech"]:
+        return "Automatic speech recognition."
 
-    df = pd.read_csv(meta_csv, sep=',')
+    elif Path(config_yaml).stem in ["audio_caption_clotho"]:
+        return "Audio caption."
 
-    for n in range(len(df)):
-        meta_dict["audio_name"].append(df["file_name"][n])
-        meta_dict["audio_path"].append(Path(audios_dir, df["file_name"][n]))
-        meta_dict["captions"].append([df["caption_{}".format(i)][n] for i in range(1, 6)])
+    elif Path(config_yaml).stem in ["piano_transcription_maestro"]:
+        return "Music transcription."
 
-    return meta_dict
+    else:
+        raise NotImplementedError("Users need to write a question!")
 
 
-def tokens_to_string(tokens, tokenizer):
-    return "".join([tokenizer.itos(token) for token in tokens])
+def convert_ids_to_texts(config_yaml, tokenizer, answering_ids):
+
+    if Path(config_yaml).stem in ["asr_librispeech", "audio_caption_clotho"]:
+        return tokenizer.tok.decode(answering_ids, skip_special_tokens=True)
+
+    elif Path(config_yaml).stem in ["piano_transcription_maestro"]:
+        a1 = tokenizer.tok.convert_ids_to_tokens(answering_ids)
+        import pickle
+        pickle.dump(a1, open("_zz.pkl", "wb"))
+        from IPython import embed; embed(using=False); os._exit(0)
+
+    else:
+        print("Using default ids to texts conversion.")
+        return tokenizer.tok.decode(answering_ids, skip_special_tokens=True)
 
 
 if __name__ == "__main__":
@@ -233,6 +146,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--config_yaml', type=str, required=True)
     parser.add_argument('--ckpt_path', type=str, required=True)
+    parser.add_argument('--audio_path', type=str, required=True)
 
     args = parser.parse_args()
 

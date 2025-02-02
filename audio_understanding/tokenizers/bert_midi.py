@@ -11,7 +11,7 @@ from transformers import AutoTokenizer
 from audio_understanding.utils import pad_or_truncate
 
 
-class BertMIDI(nn.Module):
+class BertMIDI:
     r"""Extend text tokenizer with discrete audio codec vocabularies.
     """
     
@@ -37,18 +37,18 @@ class BertMIDI(nn.Module):
         self.tok.add_tokens(new_vocabs)
         print("Extended vocab size: {}".format(len(self.tok)))
 
-    def captions_to_ids(
+    def texts_to_ids(
         self,
-        captions: list[str], 
+        texts: list[str] | list[list[str]], 
         fix_length: int
     ) -> torch.LongTensor:
-        r"""Convert captions to IDs. 
+        r"""Convert texts to IDs. 
 
         E.g., ["Hello world"]
            -> [[101, 8667, 1362, 102, 0, 0]]
 
         Args:
-            captions: list[str]
+            texts: list[str] | list[list[str]]
             fix_length: int
 
         Returns:
@@ -57,9 +57,15 @@ class BertMIDI(nn.Module):
 
         batch_ids = []
 
-        for caption in captions:
+        for text in texts:
         
-            tokens = caption
+            # Convert texts to tokens, e.g., "Hello world." -> ["Hello", "world", "."]
+            if isinstance(text, str):
+                tokens = self.tok.tokenize(text)
+            elif isinstance(text, list):
+                tokens = text
+            else:
+                raise TypeError(text)
 
             # Convert tokens to IDs. Reserve 2 IDs for special IDs
             ids = self.tok.convert_tokens_to_ids(tokens)[0 : fix_length - 2]

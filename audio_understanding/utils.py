@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import torch
 import yaml
 
 
@@ -31,3 +32,26 @@ def pad_or_truncate(x: list, length: int, pad_value: float | str) -> list:
     
     else:
         return x + [pad_value] * (length - len(x))
+
+
+def remove_padded_columns(ids: torch.LongTensor, pad_token_id: int) -> torch.LongTensor:
+    r"""Remove padded columns in a batch to shorten the seuqence length.
+    
+    E.g., [[1, 3, 2, 0, 0], [7, 0, 0, 0, 0]] -> [[1, 3, 2], [7, 0, 0]]
+
+    Args:
+        ids: (b, t)
+        pad_token_id: int
+
+    Returns:
+        ids: (b, t_new)
+    """
+
+    # Indicate whether all ids[:, t] in a batch are pad id
+    bool_tensor = torch.all(ids == pad_token_id, dim=0)
+    # shape: (t,), e.g., [False, False, False, True, True]
+
+    idx = torch.sum(bool_tensor == False)
+    ids = ids[:, 0 : idx]  # (b, t)
+
+    return ids

@@ -21,39 +21,58 @@ conda activate audio_understanding
 bash env.sh
 ```
 
-## 0. Download datasets
+## 1. Train & evaluate
 
-To train the ASR system, download LibriSpeech dataset (1,000 hours)
+### 1.1 Automatic speech recognition (ASR)
+
+To train an ASR system, users need to do download the LibriSpeech dataset (1,000 hours)
 
 ```bash
 bash ./scripts/download_librispeech.sh
 ```
 
-## 1. Train
-
-Train an ASR model:
-
 ```python
+# Train (Takes ~8 hours on 1 RTX4090 to train for 100,000 steps)
 CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/asr_librispeech.yaml"
+
+# Inference
+CUDA_VISIBLE_DEVICES=0 python inference.py \
+	--config="./configs/asr_librispeech.yaml" \
+	--ckpt_path="./checkpoints/train/asr_librispeech/step=100000.pth" \
+	--audio_path="./assets/librispeech_1688-142285-0000.wav"
 ```
 
-Train an audio caption model:
+### 1.2 Audio Caption
+```bash
+bash ./scripts/download_clotho.sh
+```
+
 ```python
+# Train (takes ~8 hours on 1 RTX4090 to train for 100,000 steps)
 CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/audio_caption_clotho.yaml"
+
+# Inference
+CUDA_VISIBLE_DEVICES=0 python inference.py \
+	--config="./configs/audio_caption_clotho.yaml" \
+	--ckpt_path="./checkpoints/train/audio_caption_clotho/step=100000.pth" \
+	--audio_path="./assets/clotho_birds_long.wav"
 ```
 
-Train a piano transcription model:
+### 1.3 Piano Transcription
+```bash
+bash ./scripts/download_maestro.sh
+```
+
 ```python
-CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/piano_transcription_maestro.yaml"
+# Train (takes ~8 hours on 1 RTX4090 to train for 100,000 steps)
+CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/audio_caption_clotho.yaml"
+
+# Inference
+CUDA_VISIBLE_DEVICES=0 python inference.py \
+	--config="./configs/piano_transcription_maestro.yaml" \
+	--ckpt_path="./checkpoints/train/piano_transcription_maestro/step=100000.pth" \
+	--audio_path="./assets/clotho_birds_long.wav"
 ```
-
-Train music generation model:
-
-```python
-CUDA_VISIBLE_DEVICES=1 python train.py --config="./configs/gtzan.yaml"
-```
-
-The training takes around 10 hours to train for 100,000 steps on a single RTX4090 GPU.
 
 ![Training & Validation Loss](assets/result_loss.png)
 
@@ -62,7 +81,7 @@ The training takes around 10 hours to train for 100,000 steps on a single RTX409
 We use Huggingface accelerate library to train the systems on multiple GPUs. train_accelerate.py just adds a few lines to train.py. Here is an example to run with 4 GPUs:
 
 ```python
-CUDA_VISIBLE_DEVICES=0,1,2,3 accelerate launch --multi_gpu --num_processes 4 train_accelerate.py --config="./configs/ljspeech.yaml"
+CUDA_VISIBLE_DEVICES=0,1,2,3 accelerate launch --multi_gpu --num_processes 4 train_accelerate.py --config="./configs/asr_librispeech.yaml"
 ```
 
 Then, the training can speed up by 4x times. The code can also train with multiple nodes such as 32 GPUs with 4 nodes.
@@ -80,11 +99,11 @@ CUDA_VISIBLE_DEVICES=0 python sample.py \
 After training on 1 RTX4090 GPU for 100,000 stesp in 10 hours, the sampled audio sounds like:
 
 
-| Task       | Training Dataset      | Text prompt                                                                                                   | Sample 1                                                                                      | Sample 2                                                                                                                                                                                                                                                                                                  |
-|------------|-----------------------|---------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
-| TTS        | LJSpeech (size: 24 h) | A happy dog ran through the park, wagging its tail excitedly, greeting everyone with joy and boundless energy | <video src="https://github.com/user-attachments/assets/5d7421e9-9f64-48a1-92c5-6cfee04a6e8c"> | <video src="https://github.com/user-attachments/assets/3433b3b7-2b48-42a9-a138-3b8166591a85"> |
-| Music Gen  | GTZAN (size: 8 h)     | country                                                                                                       | <video src="https://github.com/user-attachments/assets/428dd426-787a-487b-9c32-197d61bfece3"> | <video src="https://github.com/user-attachments/assets/2655f774-7133-4a68-b3fc-11fd9786c79f"> |
-
+| Task                | Training Dataset            | Input audio                                                              | Output                                                                                                                                               | Ground truth                                                                                                                                       |
+|---------------------|-----------------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------| ---------------------------------------------------------------------------------------------------------------------------------------------------|
+| ASR                 | LibriSpeech (size: 1,000 h) |                                                                          | there ' s iron they say in all our blood and a grain or two perhaps is good but his he makes me harshly feel has got a little too much of steel anon | THERE'S IRON THEY SAY IN ALL OUR BLOOD AND A GRAIN OR TWO PERHAPS IS GOOD BUT HIS HE MAKES ME HARSHLY FEEL HAS GOT A LITTLE TOO MUCH OF STEEL ANON |
+| Audio Caption       | Clotho (size: 24 h)         |                                                                          | a variety of birds are chirping while the birds are chirping in the background and the birds are chirping loudly.                                    | bird is chirping continuously as time goes on.                                                                                                     |
+| Piano Transcription | MAESTRO (199 h)             |                                                                          | 
 
 
 

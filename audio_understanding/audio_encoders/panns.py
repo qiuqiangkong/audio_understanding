@@ -26,7 +26,7 @@ class PannsCnn14(nn.Module):
         self.model = AudioTagging(checkpoint_path=None, device="cpu").model
         self.latent_dim = 2048
 
-    def encode(self, audio: torch.Tensor) -> torch.Tensor:
+    def encode(self, audio: torch.Tensor, train_mode: bool = True) -> torch.Tensor:
         r"""Extract audio latent.
 
         Args:
@@ -46,13 +46,13 @@ class PannsCnn14(nn.Module):
         # To mono
         audio = torch.mean(audio, dim=1)  # shape: (b, t)
 
-        if self.trainable:
+        if self.trainable and train_mode:
             self.model.train()
         else:
             self.model.eval()
 
         # Forward
-        with torch.set_grad_enabled(self.trainable):
+        with torch.set_grad_enabled(self.trainable and train_mode):
             latent = self.model(audio)["embedding"]  # (b, d)
         
         latent = latent[:, None, :]
