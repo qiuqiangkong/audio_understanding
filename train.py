@@ -68,13 +68,17 @@ def train(args) -> None:
         vocab_size=len(tokenizer),
         ckpt_path=configs["train"]["resume_ckpt_path"]
     ).to(device)
+
+    # Learnable parameters
+    params = get_learnable_params(configs, audio_encoder, llm)
     
     # Optimizer
     optimizer, scheduler = get_optimizer_and_scheduler(
         configs=configs, 
-        params=llm.parameters()
+        params=params
     )
 
+    # Logger
     if wandb_log:
         wandb.init(project="audio_understanding", name="{}".format(config_name))
 
@@ -212,7 +216,20 @@ def get_dataset(
     
     for name in configs[datasets_split].keys():
     
-        if name == "LibriSpeech":
+        if name == "GTZAN":
+
+            from audio_understanding.datasets.gtzan import GTZAN
+
+            dataset = GTZAN(
+                root=configs[datasets_split][name]["root"],
+                split=configs[datasets_split][name]["split"],
+                sr=sr,
+                crop=RandomCrop(clip_duration=clip_duration), 
+                transform=Mono(),
+            )
+            datasets.append(dataset)
+
+        elif name == "LibriSpeech":
 
             from audio_understanding.datasets.librispeech import LibriSpeech
 
@@ -383,6 +400,23 @@ def get_llm(
     return model
 
 
+def get_learnable_params(
+    configs: dict, 
+    audio_encoder: nn.Module, 
+    llm: nn.Module
+) -> list:
+
+    params = []
+
+    if configs["audio_encoder"]["trainable"]:
+        params += list(audio_encoder.parameters())
+
+    if configs["llm"]["trainable"]:
+        params += list(llm.parameters())
+
+    return params
+
+
 def get_optimizer_and_scheduler(
     configs: dict, 
     params: list[torch.Tensor]
@@ -419,7 +453,10 @@ def get_audio_question_answering(
 
     name = data["dataset_name"][0]
 
-    if name in ["AudioCaps", "Clotho", "LibriSpeech", "WavCaps"]:
+    if name in ["GTZAN"]:
+        return data["audio"], data["question"], data["label"]
+
+    elif name in ["AudioCaps", "Clotho", "LibriSpeech", "WavCaps"]:
         return data["audio"], data["question"], data["caption"]
 
     elif name in ["MAESTRO"]:
@@ -477,36 +514,45 @@ def validate(
     for idx in range(0, len(dataset), skip_n):
         print("{}/{}".format(idx, len(dataset)))
 
-        # batch_size = 1
+        # ------ 1. Data preparation ------
+        # 1.0 Collate data to batch
         data = [dataset[i] for i in range(idx, min(idx + batch_size, len(dataset)))]
         data = collate_fn(data)
 
-        # Prepare audio, question, and answering
+        # 1.1 Prepare audio, question, and answering
         audio, question, answering = get_audio_question_answering(data)
         # audio: (b, c, t), question: (b, t), answering: (b, t)
 
-        # Encode audio into latent
+        # 1.3 Tokenize question text to IDs
         audio = audio.to(device)
         audio_latent = audio_encoder.encode(audio=audio, train_mode=False)  # shape: (b, t, d)
 
-        # Tokenize question text to IDs
+        # 1.4 Tokenize answering text to IDs
         question_ids = tokenizer.texts_to_ids(
             texts=question, 
             fix_length=configs["max_question_len"]
         ).to(device)  # shape: (b, t)
 
-        # Tokenize answering text to IDs
+        # 1.5 Remove padded columns to speed up training
         answering_ids = tokenizer.texts_to_ids(
             texts=answering, 
             fix_length=configs["max_answering_len"]
         ).to(device)  # shape: (b, t)
+
+        # 1.6 Prepare inputs
+        if configs["train"]["remove_padded_columns"]:
+            answering_ids = remove_padded_columns(
+                ids=answering_ids, 
+                pad_token_id=tokenizer.pad_token_id
+            )
 
         # Prepare inputs
         seqs = [audio_latent, question_ids, answering_ids]
         seq_types = ["audio", "id", "id"]
         loss_types = [None, None, "ce"]
 
-        # Forward
+        # ------ 2. Training ------
+        # 2.1 Forward
         with torch.no_grad():
             llm.eval()
             output_seqs = llm(
@@ -515,11 +561,11 @@ def validate(
                 mask=None
             )  # list
 
-        # Prepare data for next ID prediction
+        # 2.2 Prepare data for next ID prediction
         output_seqs = [seq[:, 0 : -1] for seq in output_seqs]
         target_seqs = [seq[:, 1 :] for seq in seqs]
         
-        # Loss
+        # 2.3 Loss
         loss = ce_loss(
             output_seqs=output_seqs, 
             target_seqs=target_seqs, 
@@ -528,8 +574,7 @@ def validate(
         )
 
         losses.append(loss.item())
-        # from IPython import embed; embed(using=False); os._exit(0)
-
+        
     return np.mean(losses)
 
 

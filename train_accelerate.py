@@ -16,11 +16,11 @@ from tqdm import tqdm
 from typing_extensions import Literal
 import wandb
 
-from audio_understanding.utils import LinearWarmUp, parse_yaml
+from audio_understanding.utils import LinearWarmUp, parse_yaml, remove_padded_columns
 from audio_understanding.data.samplers import InfiniteSampler
 from audidata.collate.default import collate_fn
 
-from train import get_dataset, get_audio_encoder, get_tokenizer, get_llm, get_optimizer_and_scheduler, get_audio_question_answering, ce_loss, validate
+from train import get_dataset, get_audio_encoder, get_tokenizer, get_llm, get_learnable_params, get_optimizer_and_scheduler, get_audio_question_answering, ce_loss, validate
 
 
 def train(args) -> None:
@@ -33,12 +33,6 @@ def train(args) -> None:
     # Configs
     configs = parse_yaml(config_path)
     device = configs["train"]["device"]
-    batch_size = configs["train"]["batch_size_per_device"]
-    num_workers = configs["train"]["num_workers"]
-    test_every_n_steps = configs["train"]["test_every_n_steps"]
-    save_every_n_steps = configs["train"]["save_every_n_steps"]
-    training_steps = configs["train"]["training_steps"]
-    resume_ckpt_path = configs["train"]["resume_ckpt_path"]
 
     # Checkpoints directory
     config_name = Path(config_path).stem
@@ -55,9 +49,9 @@ def train(args) -> None:
     # Dataloader
     train_dataloader = DataLoader(
         dataset=train_dataset, 
-        batch_size=batch_size, 
+        batch_size=configs["train"]["batch_size_per_device"], 
         sampler=train_sampler,
-        num_workers=num_workers, 
+        num_workers=configs["train"]["num_workers"], 
         collate_fn=collate_fn,
         pin_memory=True
     )
@@ -65,7 +59,7 @@ def train(args) -> None:
     # Audio encoder
     audio_encoder = get_audio_encoder(
         configs=configs, 
-        ckpt_path=resume_ckpt_path
+        ckpt_path=configs["train"]["resume_ckpt_path"]
     )
     
     # Tokenizer for converting text into IDs and vice versa
@@ -76,13 +70,16 @@ def train(args) -> None:
         configs=configs, 
         audio_latent_dim=audio_encoder.latent_dim, 
         vocab_size=len(tokenizer),
-        ckpt_path=resume_ckpt_path
+        ckpt_path=configs["train"]["resume_ckpt_path"]
     )
+    
+    # Learnable parameters
+    params = get_learnable_params(configs, audio_encoder, llm)
     
     # Optimizer
     optimizer, scheduler = get_optimizer_and_scheduler(
         configs=configs, 
-        params=llm.parameters()
+        params=params
     )
 
     # Prepare for acceleration
@@ -92,38 +89,48 @@ def train(args) -> None:
     audio_encoder, llm, tokenizer, optimizer, train_dataloader = accelerator.prepare(
         audio_encoder, llm, tokenizer, optimizer, train_dataloader)
 
+    # Logger
     if wandb_log and accelerator.is_main_process:
         wandb.init(project="audio_understanding", name="{}".format(config_name))
 
     # Train
     for step, data in enumerate(tqdm(train_dataloader)):
 
-        # Prepare audio, question, and answering
+        # ------ 1. Data preparation ------
+        # 1.1 Prepare audio, question, and answering
         audio, question, answering = get_audio_question_answering(data)
         # audio: (b, c, t), question: (b, t), answering: (b, t)
 
-        # Encode audio into latent
+        # 1.2 Encode audio into latent
         audio_latent = audio_encoder.module.encode(audio=audio)  # shape: (b, t, d)
         device = audio_latent.device
 
-        # Tokenize question text to IDs
+        # 1.3 Tokenize question text to IDs
         question_ids = tokenizer.texts_to_ids(
             texts=question, 
             fix_length=configs["max_question_len"]
         ).to(device)  # shape: (b, t)
 
-        # Tokenize answering text to IDs
+        # 1.4 Tokenize answering text to IDs
         answering_ids = tokenizer.texts_to_ids(
             texts=answering, 
             fix_length=configs["max_answering_len"]
         ).to(device)  # shape: (b, t)
 
-        # Prepare inputs
+        # 1.5 Remove padded columns to speed up training
+        if configs["train"]["remove_padded_columns"]:
+            answering_ids = remove_padded_columns(
+                ids=answering_ids, 
+                pad_token_id=tokenizer.pad_token_id
+            )
+
+        # 1.6 Prepare inputs
         seqs = [audio_latent, question_ids, answering_ids]
         seq_types = ["audio", "id", "id"]
         loss_types = [None, None, "ce"]
 
-        # Forward
+        # ------ 2. Training ------
+        # 2.1 Forward
         llm.train()
         output_seqs = llm(
             seqs=seqs,
@@ -131,11 +138,11 @@ def train(args) -> None:
             mask=None
         )  # list
 
-        # Prepare data for next ID prediction
+        # 2.2 Prepare data for next ID prediction
         output_seqs = [seq[:, 0 : -1] for seq in output_seqs]
         target_seqs = [seq[:, 1 :] for seq in seqs]
         
-        # Loss
+        # 2.3 Loss
         loss = ce_loss(
             output_seqs=output_seqs, 
             target_seqs=target_seqs, 
@@ -143,20 +150,21 @@ def train(args) -> None:
             ignore_index=tokenizer.pad_token_id
         )
         
-        # Optimize
+        # 2.4 Optimize
         optimizer.zero_grad()  # Reset all parameter.grad to 0
         accelerator.backward(loss)  # Update all parameter.grad
         optimizer.step()  # Update all parameters based on all parameter.grad
 
-        # Learning rate scheduler
+        # 2.5 Learning rate scheduler
         if scheduler:
             scheduler.step()
 
         if step % 100 == 0:
             print(loss)
         
-        # Evaluate
-        if step % test_every_n_steps == 0 and accelerator.is_main_process:
+        # ------ 3. Evaluation ------
+        # 3.1 Evaluate
+        if step % configs["train"]["test_every_n_steps"] == 0 and accelerator.is_main_process:
 
             train_loss = validate(
                 configs=configs,
@@ -183,8 +191,8 @@ def train(args) -> None:
             print("Train loss: {}".format(train_loss))
             print("Test loss: {}".format(test_loss))
         
-        # Save model
-        if step % save_every_n_steps == 0 and accelerator.is_main_process:
+        # 3.2 Save model
+        if step % configs["train"]["save_every_n_steps"] == 0 and accelerator.is_main_process:
             
             ckpt_path = Path(ckpts_dir, "step={}.pth".format(step))
             ckpt = {}
@@ -198,7 +206,7 @@ def train(args) -> None:
             torch.save(ckpt, ckpt_path)
             print("Save model to {}".format(ckpt_path))
 
-        if step == training_steps:
+        if step == configs["train"]["training_steps"]:
             break
 
 

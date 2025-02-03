@@ -15,18 +15,7 @@ class MIDI2Tokens:
         Outputs:
             tokens: list[str], e.g., ["time_index=15", "name=note_onset", "pitch=36", "velocity=27", ...]
         """
-        tokens = self.encode(data)
-        return tokens
 
-    def encode(self, data: dict) -> list[str]:
-        r"""Convert data of MIDI events to tokens.
-        
-        Args:
-            data: dict
-
-        Outputs:
-            tokens: list[str], e.g., ["time_index=15", "name=note_onset", "pitch=36", "velocity=27", ...]
-        """
         start_time = data["start_time"]
         duration = data["duration"]
         end_time = start_time + duration
@@ -34,7 +23,7 @@ class MIDI2Tokens:
         notes = data["note"]
         pedals = data["pedal"]
 
-        tokens = []
+        events = []
 
         for note in notes:
 
@@ -43,7 +32,7 @@ class MIDI2Tokens:
 
             elif (note.start < start_time) and (start_time <= note.end <= end_time):
                 
-                tokens.append([
+                events.append([
                     "name=note_offset",
                     "time_index={}".format(round((note.end - start_time) * self.fps)),
                     "pitch={}".format(note.pitch)
@@ -54,14 +43,14 @@ class MIDI2Tokens:
 
             elif (start_time <= note.start <= end_time) and (start_time <= note.end <= end_time):
 
-                tokens.append([
+                events.append([
                     "name=note_onset",
                     "time_index={}".format(round((note.start - start_time) * self.fps)),
                     "pitch={}".format(note.pitch),
                     "velocity={}".format(note.velocity)
                 ])
 
-                tokens.append([
+                events.append([
                     "name=note_offset",
                     "time_index={}".format(round((note.end - start_time) * self.fps)),
                     "pitch={}".format(note.pitch),
@@ -69,7 +58,7 @@ class MIDI2Tokens:
 
             elif (start_time <= note.start <= end_time) and (end_time < note.end):
 
-                tokens.append([
+                events.append([
                     "name=note_onset",
                     "time_index={}".format(round((note.start - start_time) * self.fps)),
                     "pitch={}".format(note.pitch),
@@ -82,45 +71,83 @@ class MIDI2Tokens:
             else:
                 raise NotImplementedError
 
-        # Sort tokens by time
-        tokens = self.sort_tokens(tokens)
+        # Sort events by time
+        events = self.sort_events(events)
 
         # Flat tokens
-        tokens = self.flat_tokens(tokens)
+        tokens = self.flat_events(events)
 
         data.update({"token": tokens})
 
         return data
 
-    def sort_tokens(self, tokens: list[list[str]]) -> list[list[str]]:
-        r"""Sort note by time."""
-        
-        sorted_list = []
+    def sort_events(self, events: list[list[str]]) -> list[list[str]]:
+        r"""Sort events by time.
 
-        for sub_tokens in tokens:
+        Args:
+            events: e.g., [
+                ["name=note_offset", "time_index=497", "pitch=69"]
+                ["name=note_onset", "time_index=480", "pitch=69", "velocity=62"],
+                ...]
             
-            filled_sub_tokens =  []  # pitch=60 -> pitch=000060
+        Returns:
+            sorted_events: e.g., [
+                ["name=note_onset", "time_index=480", "pitch=69", "velocity=62"],
+                ["name=note_offset", "time_index=497", "pitch=69"]
+                ...]
+        """
+        
+        pairs = []
 
-            for token in sub_tokens:    
-                
-                for number in re.findall(r'\d+', token):
-                    token = token.replace(number, "{:06d}".format(int(number)))
+        for event in events:
+            pair = self.get_key_value_pair(event)
+            pairs.append(pair)
 
-                filled_sub_tokens.append(token)
+        pairs.sort(key=lambda x: x[0])
 
-            sorted_list.append({"key": ",".join(filled_sub_tokens), "value": sub_tokens})
+        sorted_events = [x[1] for x in pairs]
 
-        sorted_list.sort(key=lambda x: x["key"])
+        return sorted_events
 
-        sorted_token_list = [x["value"] for x in sorted_list]
+    def get_key_value_pair(self, event: list[str]) -> tuple[str, list[str]]:
+        r"""Get key and value pair for sorting events.
 
-        return sorted_token_list
+        Args:
+            event: list[str], e.g., ["name=note_offset", "time_index=56", "pitch=44"]
 
-    def flat_tokens(self, tokens: list[list[str]]) -> list[str]:
+        Returns:
+            key: e.g., "time_index=000056,name=note_offset,pitch=000044"
+            value: e.g., ["name=note_offset", "time_index=56", "pitch=44"]
+        """
 
-        flatten_tokens = []
+        desired_order = ["time_index", "name", "pitch", "velocity"]
+        
+        # Sort tokens by desired order
+        sorted_tokens = sorted(event, key=lambda x: desired_order.index(x.split('=')[0]))
+        # E.g., ["time_index=56", 'name=note_offset', "pitch=44"]
 
-        for sub_tokens in tokens:
-            flatten_tokens += sub_tokens
+        # Pad 0 for sort
+        sorted_tokens = [self.zero_pad_string(token) for token in sorted_tokens]
+        # E.g., ["time_index=000056", 'name=note_offset', "pitch=000044"]
 
-        return flatten_tokens
+        key = ",".join(sorted_tokens)
+        # E.g., "time_index=000056,name=note_offset,pitch=000044"
+
+        return key, event
+
+    def zero_pad_string(self, token: str) -> str:
+        r"""Left pad values for sorting."""
+        key, value = token.split("=")
+        if value.isdigit():
+            return "{}={:06d}".format(key, int(value))
+        else:
+            return token
+
+    def flat_events(self, events: list[list[str]]) -> list[str]:
+
+        tokens = []
+
+        for event in events:
+            tokens += event
+
+        return tokens

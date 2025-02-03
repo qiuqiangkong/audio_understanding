@@ -97,7 +97,7 @@ def inference(args):
 
 def get_top_k(config_yaml: str) -> int:
 
-    if Path(config_yaml).stem in ["asr_librispeech"]:
+    if Path(config_yaml).stem in ["asr_librispeech", "music_tagging_gtzan"]:
         return 1
 
     elif Path(config_yaml).stem in ["piano_transcription_maestro"]:
@@ -112,7 +112,10 @@ def get_top_k(config_yaml: str) -> int:
 
 def get_question(config_yaml: str) -> str:
     
-    if Path(config_yaml).stem in ["asr_librispeech"]:
+    if Path(config_yaml).stem in ["music_tagging_gtzan"]:
+        return "Music tagging."
+
+    elif Path(config_yaml).stem in ["asr_librispeech"]:
         return "Automatic speech recognition."
 
     elif Path(config_yaml).stem in ["audio_caption_clotho"]:
@@ -127,7 +130,7 @@ def get_question(config_yaml: str) -> str:
 
 def convert_ids_to_texts(config_yaml, tokenizer, answering_ids):
 
-    if Path(config_yaml).stem in ["asr_librispeech", "audio_caption_clotho"]:
+    if Path(config_yaml).stem in ["asr_librispeech", "audio_caption_clotho", "music_tagging_gtzan"]:
         return tokenizer.tok.decode(answering_ids, skip_special_tokens=True)
 
     elif Path(config_yaml).stem in ["piano_transcription_maestro"]:

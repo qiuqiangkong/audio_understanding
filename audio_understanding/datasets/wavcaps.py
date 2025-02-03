@@ -1,6 +1,6 @@
 r"""
-Modified from https://github.com/AudioFans/audidata/tree/main/audidata/datasets/wavcaps.py
-Added only a few lines to support the audio, question, answering task.
+Copied from https://github.com/AudioFans/audidata/tree/main/audidata/datasets/wavcaps.py
+Only added a few lines to support the audio, question, answering task.
 """
 from __future__ import annotations
 

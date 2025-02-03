@@ -33,7 +33,8 @@ llm:
     
 train:
     device: "cuda"
-    num_workers: 16 
+    num_workers: 16
+    remove_padded_columns: True
     loss: ce_loss
     optimizer: AdamW
     lr: 1e-4

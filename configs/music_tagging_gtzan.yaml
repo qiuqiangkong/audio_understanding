@@ -1,21 +1,21 @@
 ---
 sample_rate: 16000
-clip_duration: 30.
+clip_duration: 10.
 max_question_len: 50
 max_answering_len: 100
 
 train_datasets:
-    LibriSpeech:
-        root: "/datasets/librispeech"
+    GTZAN:
+        root: "/datasets/gtzan"
         split: "train"
 
 test_datasets:
-    LibriSpeech:
-        root: "/datasets/librispeech"
+    GTZAN:
+        root: "/datasets/gtzan"
         split: "test"
         
 audio_encoder:
-    name: Whisper
+    name: PannsCnn14
     trainable: False
 
 tokenizer:
