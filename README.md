@@ -46,7 +46,11 @@ Results
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                |Output   | Ground truth  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|---------------------------|----------|---------------|
-| Music Tagging       | GTZAN (size: 8 h)           | ![gtzan](https://github.com/user-attachments/assets/2966581f-c53b-4ab6-982d-1617531baeca)  |                           |blues    | blues         |
+| Music Tagging       | GTZAN (size: 8 h)           | ![gtzan](https://github.com/user-attachments/assets/2966581f-c53b-4ab6-982d-1617531baeca)  | 
+
+https://github.com/user-attachments/assets/612c8f01-3561-4197-82f9-710901b96834
+
+                          |blues    | blues         |
 
 ### 1.2 Automatic speech recognition (ASR)
 
