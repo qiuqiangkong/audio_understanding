@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import random
-import numpy as np
-from typing import Optional, Sized
+from typing import Sized
 
+import numpy as np
 from torch.utils.data import Dataset
 
 

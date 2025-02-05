@@ -2,21 +2,19 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-import re
 
 import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from torch.utils.data import DataLoader, Dataset, ConcatDataset
-from tqdm import tqdm
-from typing_extensions import Literal
-import wandb
-
-from audio_understanding.utils import parse_yaml, LinearWarmUp, remove_padded_columns
-from audio_understanding.data.samplers import InfiniteSampler
 from audidata.collate.default import collate_fn
+from torch.utils.data import DataLoader, Dataset
+from tqdm import tqdm
+
+import wandb
+from audio_understanding.data.samplers import InfiniteSampler
+from audio_understanding.utils import LinearWarmUp, parse_yaml, remove_padded_columns
 
 
 def train(args) -> None:
@@ -198,6 +196,7 @@ def train(args) -> None:
         if step == configs["train"]["training_steps"]:
             break
         
+        
 def get_dataset(
     configs: dict, 
     split: str
@@ -205,7 +204,7 @@ def get_dataset(
     r"""Get datasets."""
 
     from audidata.io.crops import RandomCrop, StartCrop
-    from audidata.transforms import Mono, TimeShift, TextNormalization
+    from audidata.transforms import Mono, TextNormalization, TimeShift
 
     sr = configs["sample_rate"]
     clip_duration = configs["clip_duration"]
@@ -257,9 +256,10 @@ def get_dataset(
 
         elif name == "MAESTRO":
 
+            from audidata.transforms.midi import PianoRoll
+
             from audio_understanding.datasets.maestro import MAESTRO
             from audio_understanding.target_transforms.midi import MIDI2Tokens
-            from audidata.transforms.midi import PianoRoll
 
             CLS = locals()[configs["midi_to_tokens"]]
             
@@ -324,7 +324,8 @@ def get_audio_encoder(configs: dict, ckpt_path: str) -> nn.Module:
         model = Whisper(sr=sr, trainable=trainable)
 
     elif name == "PianoTranscriptionCRnn":
-        from audio_understanding.audio_encoders.piano_transcription_crnn import PianoTranscriptionCRnn
+        from audio_understanding.audio_encoders.piano_transcription_crnn import \
+            PianoTranscriptionCRnn
         model = PianoTranscriptionCRnn(sr=sr, trainable=trainable)
 
     elif name == "PannsCnn14":
@@ -473,7 +474,6 @@ def ce_loss(
 ) -> torch.float:
     r"""Calculate loss."""
 
-    seqs_len = len(target_seqs)
     total_loss = 0.
 
     for i in range(len(output_seqs)):

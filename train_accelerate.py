@@ -2,25 +2,20 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-import re
 
+import torch
 from accelerate import Accelerator
 from accelerate import DistributedDataParallelKwargs as DDPK
-import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from torch.utils.data import DataLoader, Dataset, ConcatDataset
-from tqdm import tqdm
-from typing_extensions import Literal
-import wandb
-
-from audio_understanding.utils import LinearWarmUp, parse_yaml, remove_padded_columns
-from audio_understanding.data.samplers import InfiniteSampler
 from audidata.collate.default import collate_fn
+from torch.utils.data import DataLoader
+from tqdm import tqdm
 
-from train import get_dataset, get_audio_encoder, get_tokenizer, get_llm, get_learnable_params, get_optimizer_and_scheduler, get_audio_question_answering, ce_loss, validate
+import wandb
+from audio_understanding.data.samplers import InfiniteSampler
+from audio_understanding.utils import parse_yaml, remove_padded_columns
+from train import (ce_loss, get_audio_encoder, get_audio_question_answering,
+                   get_dataset, get_learnable_params, get_llm,
+                   get_optimizer_and_scheduler, get_tokenizer, validate)
 
 
 def train(args) -> None:

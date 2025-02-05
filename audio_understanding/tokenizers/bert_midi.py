@@ -1,14 +1,8 @@
 from __future__ import annotations
 
-import re
-
-import numpy as np
 import torch
-import torch.nn as nn
-from einops import rearrange
-from transformers import AutoTokenizer
-
 from audio_understanding.utils import pad_or_truncate
+from transformers import AutoTokenizer
 
 
 class BertMIDI:

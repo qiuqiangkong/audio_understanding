@@ -1,23 +1,18 @@
-"""Modified from https://github.com/qiuqiangkong/mini_llm/blob/main/sample.py
-"""
 from __future__ import annotations
-import argparse
 
-import pandas as pd
+import argparse
+import pickle
 from pathlib import Path
-import soundfile
-import torch
+
 import librosa
-from audidata.datasets import Clotho
-from audidata.io.crops import RandomCrop, StartCrop
-from audidata.transforms import Mono
-from audidata.datasets import MAESTRO
+import pretty_midi
+import torch
 
 from audio_understanding.utils import parse_yaml
-from train import get_audio_encoder, get_tokenizer, get_llm
+from train import get_audio_encoder, get_llm, get_tokenizer
 
 
-def inference(args):
+def inference(args) -> None:
 
     # Arguments and parameters
     config_yaml = args.config_yaml
@@ -31,9 +26,6 @@ def inference(args):
     clip_duration = configs["clip_duration"]
     clip_samples = round(clip_duration * sr)
     temperature = 1.0
-    
-    # Load checkpoint
-    ckpt = torch.load(ckpt_path)
 
     # Audio encoder
     audio_encoder = get_audio_encoder(
@@ -84,11 +76,11 @@ def inference(args):
             seqs=seqs,
             seq_types=seq_types,
             max_new_ids=configs["max_answering_len"], 
-            # max_new_ids=300,
             temperature=temperature, 
             top_k=get_top_k(config_yaml)
         )
 
+    # Get answering from output seqs
     answering_ids = output_seqs[2][0]  # shape: (t)
 
     answering_texts = convert_ids_to_texts(config_yaml, tokenizer, answering_ids)
@@ -97,7 +89,10 @@ def inference(args):
 
 def get_top_k(config_yaml: str) -> int:
 
-    if Path(config_yaml).stem in ["asr_librispeech", "music_tagging_gtzan"]:
+    if Path(config_yaml).stem in ["asr_librispeech"]:
+        return 1
+
+    elif Path(config_yaml).stem in ["music_tagging_gtzan"]:
         return 1
 
     elif Path(config_yaml).stem in ["piano_transcription_maestro"]:
@@ -128,20 +123,86 @@ def get_question(config_yaml: str) -> str:
         raise NotImplementedError("Users need to write a question!")
 
 
-def convert_ids_to_texts(config_yaml, tokenizer, answering_ids):
+def convert_ids_to_texts(config_yaml: dict, tokenizer, answering_ids: list[int]):
 
     if Path(config_yaml).stem in ["asr_librispeech", "audio_caption_clotho", "music_tagging_gtzan"]:
         return tokenizer.tok.decode(answering_ids, skip_special_tokens=True)
 
     elif Path(config_yaml).stem in ["piano_transcription_maestro"]:
-        a1 = tokenizer.tok.convert_ids_to_tokens(answering_ids)
-        import pickle
-        pickle.dump(a1, open("_zz.pkl", "wb"))
-        from IPython import embed; embed(using=False); os._exit(0)
+        tokens = tokenizer.tok.convert_ids_to_tokens(answering_ids)
+        pickle.dump(tokens, open("tmp_tokens.pkl", "wb"))
+
+        # Dump for speeding up debug
+        tokens = pickle.load(open("tmp_tokens.pkl", "rb"))
+        configs = parse_yaml(config_yaml)
+        tokens_to_midi(tokens=tokens, fps=configs["fps"], output_path="output.mid")
+        return tokens
 
     else:
         print("Using default ids to texts conversion.")
         return tokenizer.tok.decode(answering_ids, skip_special_tokens=True)
+
+
+def tokens_to_midi(tokens: list[str], fps: float, output_path: str) -> None:
+
+    note_dict = {pitch: [] for pitch in range(128)}
+    tokens_num = len(tokens)
+
+    for i in range(len(tokens)):
+
+        print(i, tokens[i])
+
+        if "=" in tokens[i]:
+
+            key, value = tokens[i].split("=")
+
+            if value == "note_onset" and i + 3 < tokens_num:
+                key, value = tokens[i + 1].split("=")
+                assert key == "time_index"
+                time_index = int(value)
+
+                key, value = tokens[i + 2].split("=")
+                assert key == "pitch"
+                pitch = int(value)
+
+                key, value = tokens[i + 3].split("=")
+                assert key == "velocity"
+                velocity = int(value)
+
+                note = {"onset_time_index": time_index, "pitch": pitch, "velocity": velocity}
+                note_dict[pitch].append(note)
+
+            elif value == "note_offset" and i + 2 < tokens_num:
+                key, value = tokens[i + 1].split("=")
+                assert key == "time_index"
+                time_index = int(value)
+
+                key, value = tokens[i + 2].split("=")
+                assert key == "pitch"
+                pitch = int(value)
+
+    events = []
+
+    for pitch in note_dict.keys():
+        events += note_dict[pitch]
+
+    # Write out MIDI
+    track = pretty_midi.Instrument(program=0)
+    track.is_drum = False
+    for e in events:
+        if "offset_time_index" in e.keys():
+            note = pretty_midi.Note(
+                pitch=e["pitch"], 
+                start=e["onset_time_index"] / 100, 
+                end=e["offset_time_index"] / 100, 
+                velocity=e["velocity"]
+            )
+            track.notes.append(note)
+
+    midi_data = pretty_midi.PrettyMIDI()
+    midi_data.instruments.append(track)
+    midi_data.write(output_path)
+    print("Write out to {}".format(output_path))
 
 
 if __name__ == "__main__":

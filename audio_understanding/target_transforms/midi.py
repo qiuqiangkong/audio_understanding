@@ -1,6 +1,3 @@
-import re
-
-
 class MIDI2Tokens:
     def __init__(self, fps: float) -> None:
         r"""Convert MIDI events to captions."""

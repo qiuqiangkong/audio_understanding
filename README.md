@@ -31,6 +31,23 @@ To train a music tagging system, users need to do download the GTZAN dataset (1.
 bash ./scripts/download_gtzan.sh
 ```
 
+The downloaded dataset after compression looks like:
+
+<pre>
+gtzan (1.3 GB)
+└── genres
+    ├── blues (100 files)
+    ├── classical (100 files)
+    ├── country (100 files)
+    ├── disco (100 files)
+    ├── hiphop (100 files)
+    ├── jazz (100 files)
+    ├── metal (100 files)
+    ├── pop (100 files)
+    ├── reggae (100 files)
+    └── rock (100 files)
+</pre>
+
 ```python
 # Train (Takes ~3 hours on 1 RTX4090 to train for 100,000 steps)
 CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/music_tagging_gtzan.yaml"
@@ -56,6 +73,32 @@ To train an ASR system, users need to do download the LibriSpeech dataset (1,000
 ```bash
 bash ./scripts/download_librispeech.sh
 ```
+
+The downloaded dataset after compression looks like:
+
+<pre>
+librispeech (60 GB)
+├── dev-clean (40 folders)
+│   ├── 1272 (3 folders)
+│   │   ├── 128104
+│   │   │   ├── 1272-128104-0000.flac
+│   │   │   ├── ...
+│   │   │   ├── 1272-128104-0014.flac
+│   │   │   └── 1272-128104.trans.txt
+│   │    ...
+│    ...
+├── dev-other (33 folders)
+├── test-clean (40 folders)
+├── test-other (33 folders)
+├── train-clean-100 (251 folders)
+├── train-clean-360 (921 folders)
+├── train-other-500 (1166 folders)
+├── BOOKS.TXT
+├── CHAPTERS.TXT
+├── LICENSE.TXT
+├── README.TXT
+└── SPEAKERS.TXT
+</pre>
 
 ```python
 # Train (Takes ~8 hours on 1 RTX4090 to train for 100,000 steps)

@@ -1,8 +1,8 @@
-import torch.nn as nn
+from __future__ import annotations
+
 import torch
-import torch.nn.functional as F
+import torch.nn as nn
 import torchaudio
-import librosa
 from panns_inference import AudioTagging
 
 

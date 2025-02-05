@@ -3,7 +3,6 @@ Modified from https://github.com/qiuqiangkong/mini_llm/blob/main/models/llama.py
 """
 import math
 from dataclasses import dataclass
-from typing import List, Optional, Tuple, Union
 
 import torch
 import torch.nn as nn
@@ -158,7 +157,7 @@ class Llama(nn.Module):
             x = latent[:, start_idx : start_idx + seq_len, :]
             start_idx += seq_len
 
-            if seq_type is "audio":
+            if seq_type == "audio":
                 x = self.audio_head(x)
 
             elif seq_type == "id":
