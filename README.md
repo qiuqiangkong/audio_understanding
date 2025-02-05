@@ -39,7 +39,7 @@ CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/music_tagging_gtzan.y
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/music_tagging_gtzan.yaml" \
 	--ckpt_path="./checkpoints/train/music_tagging_gtzan/step=100000.pth" \
-	--audio_path="./assets/gtzan_blues.00002.au"
+	--audio_path="./assets/audios/gtzan_blues.00002.au"
 ```
 
 Results
@@ -69,7 +69,7 @@ CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/asr_librispeech.yaml"
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/asr_librispeech.yaml" \
 	--ckpt_path="./checkpoints/train/asr_librispeech/step=20000.pth" \
-	--audio_path="./assets/librispeech_1688-142285-0000.flac"
+	--audio_path="./assets/audios/librispeech_1688-142285-0000.flac"
 ```
 
 ### 1.3 Audio Caption
@@ -85,7 +85,7 @@ CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/audio_caption_clotho.
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/audio_caption_clotho.yaml" \
 	--ckpt_path="./checkpoints/train/audio_caption_clotho/step=20000.pth" \
-	--audio_path="./assets/clotho_birds_long.wav"
+	--audio_path="./assets/audios/clotho_birds_long.wav"
 ```
 
 ### 1.4 Piano Transcription
@@ -101,7 +101,7 @@ CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/piano_transcription_m
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/piano_transcription_maestro.yaml" \
 	--ckpt_path="./checkpoints/train/piano_transcription_maestro/step=20000.pth" \
-	--audio_path="./assets/clotho_birds_long.wav"
+	--audio_path="./assets/audios/cut_liszt_5s.mp3"
 ```
 
 ![Training & Validation Loss](assets/result_loss.png)
