@@ -44,9 +44,9 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 
 Inference results by using the 100,000 steps checkpoint:
 
-| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output   | Ground truth  |
-|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|----------|---------------|
-| Music Tagging       | GTZAN (size: 8 h)           | ![gtzan](https://github.com/user-attachments/assets/b20dfb54-161a-47b1-bf3d-ab836d4ee974) | <video src=https://github.com/user-attachments/assets/3525bf28-59f6-49f0-b6b6-de86d86c719f> | blues    | blues         |
+| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output   |
+|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|----------|
+| Music Tagging       | GTZAN (size: 8 h)           | ![gtzan](https://github.com/user-attachments/assets/b20dfb54-161a-47b1-bf3d-ab836d4ee974) | <video src=https://github.com/user-attachments/assets/3525bf28-59f6-49f0-b6b6-de86d86c719f> | blues    |
 
 
 ### 1.2 Automatic speech recognition (ASR)
@@ -70,9 +70,9 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 
 Inference results by using the 100,000 steps checkpoint:
 
-| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  | Ground truth  |
+| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|---------------|
-| ASR                 | LibriSpeech (size: 1,000 h) | ![librispeech](https://github.com/user-attachments/assets/e8b1edef-0bc6-4772-a4a8-7462380e7dd1) | <video src=https://github.com/user-attachments/assets/f14973a9-8d2a-4658-929f-b9d71ed9d216> | there ' s ion they say in all blood and a grain or two perhaps is good but he makes me harshly feel has got a little too much of steel an little too much of steel anon | THERE'S IRON THEY SAY IN ALL OUR BLOOD AND A GRAIN OR TWO PERHAPS IS GOOD BUT HIS HE MAKES ME HARSHLY FEEL HAS GOT A LITTLE TOO MUCH OF STEEL ANON |
+| ASR                 | LibriSpeech (size: 1,000 h) | ![librispeech](https://github.com/user-attachments/assets/e8b1edef-0bc6-4772-a4a8-7462380e7dd1) | <video src=https://github.com/user-attachments/assets/f14973a9-8d2a-4658-929f-b9d71ed9d216> | there ' s ion they say in all blood and a grain or two perhaps is good but he makes me harshly feel has got a little too much of steel an little too much of steel anon |
 
 ### 1.3 Audio Caption
 ```bash
@@ -92,9 +92,9 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 
 Inference results by using the 100,000 steps checkpoint:
 
-| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  | Ground truth  |
-|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|---------------|
-| Audio Caption       | Clotho (size: 24 h)         | ![clotho](https://github.com/user-attachments/assets/b269a4e3-fcd9-4bf4-a79a-613f60fa6ae4) | <video src=https://github.com/user-attachments/assets/696a7fd8-f738-4002-bc90-fe9275a143a6> | birds are buzzing by birds chirping in the background and a few people speak. | a variety of birds are chirping while the birds are chirping in the background and the birds are chirping loudly. |
+| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
+|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
+| Audio Caption       | Clotho (size: 24 h)         | ![clotho](https://github.com/user-attachments/assets/b269a4e3-fcd9-4bf4-a79a-613f60fa6ae4) | <video src=https://github.com/user-attachments/assets/696a7fd8-f738-4002-bc90-fe9275a143a6> | birds are buzzing by birds chirping in the background and a few people speak. |
 
 
 ### 1.4 Piano Transcription
@@ -128,7 +128,7 @@ We use Huggingface accelerate library to train the systems on multiple GPUs. tra
 CUDA_VISIBLE_DEVICES=0,1,2,3 accelerate launch --multi_gpu --num_processes 4 train_accelerate.py --config="./configs/asr_librispeech.yaml"
 ```
 
-Loss comparison between training with 1 GPU and 4 GPUs:
+Loss comparison between training with 1 GPU and 4 GPUs. The training will speed up by 4 times.
 
 | Task                | Training Dataset            | Train loss                                                                                       | Test loss                                                                                 |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
@@ -145,3 +145,16 @@ The Llama model code is from: https://github.com/qiuqiangkong/mini_llm
 ## License
 
 MIT
+
+## Cite
+<pre>
+@article{kong2020panns,
+  title={Panns: Large-scale pretrained audio neural networks for audio pattern recognition},
+  author={Kong, Qiuqiang and Cao, Yin and Iqbal, Turab and Wang, Yuxuan and Wang, Wenwu and Plumbley, Mark D},
+  journal={IEEE/ACM Transactions on Audio, Speech, and Language Processing},
+  volume={28},
+  pages={2880--2894},
+  year={2020},
+  publisher={IEEE}
+}
+</pre>
