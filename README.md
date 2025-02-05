@@ -42,19 +42,11 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--audio_path="./assets/audios/gtzan_blues.00002.au"
 ```
 
-Results
+Inference results by using the 100,000 steps checkpoint:
 
-| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                      |Output   | Ground truth  |
-|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|---------|---------------|
-| Music Tagging       | GTZAN (size: 8 h)           | ![gtzan](https://github.com/user-attachments/assets/b20dfb54-161a-47b1-bf3d-ab836d4ee974) | <video src=https://github.com/user-attachments/assets/3525bf28-59f6-49f0-b6b6-de86d86c719f> |blues    | blues         |
-
-
-
-
-
-
-
-
+| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output   | Ground truth  |
+|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|----------|---------------|
+| Music Tagging       | GTZAN (size: 8 h)           | ![gtzan](https://github.com/user-attachments/assets/b20dfb54-161a-47b1-bf3d-ab836d4ee974) | <video src=https://github.com/user-attachments/assets/3525bf28-59f6-49f0-b6b6-de86d86c719f> | blues    | blues         |
 
 
 ### 1.2 Automatic speech recognition (ASR)
@@ -76,6 +68,12 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--audio_path="./assets/audios/librispeech_1688-142285-0000.flac"
 ```
 
+Inference results by using the 100,000 steps checkpoint:
+
+| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  | Ground truth  |
+|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|---------------|
+| ASR                 | LibriSpeech (size: 1,000 h) |  | <video src=> | there ' s ion they say in all blood and a grain or two perhaps is good but he makes me harshly feel has got a little too much of steel an little too much of steel anon | THERE'S IRON THEY SAY IN ALL OUR BLOOD AND A GRAIN OR TWO PERHAPS IS GOOD BUT HIS HE MAKES ME HARSHLY FEEL HAS GOT A LITTLE TOO MUCH OF STEEL ANON |
+
 ### 1.3 Audio Caption
 ```bash
 bash ./scripts/download_clotho.sh
@@ -92,6 +90,12 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--audio_path="./assets/audios/clotho_birds_long.wav"
 ```
 
+Inference results by using the 100,000 steps checkpoint:
+
+| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  | Ground truth  |
+|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|---------------|
+| Audio Caption       | Clotho (size: 24 h)         |  | <video src=> | birds are buzzing by birds chirping in the background and a few people speak. | a variety of birds are chirping while the birds are chirping in the background and the birds are chirping loudly. |
+
 ### 1.4 Piano Transcription
 ```bash
 bash ./scripts/download_maestro.sh
@@ -107,6 +111,12 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--ckpt_path="./checkpoints/train/piano_transcription_maestro/step=20000.pth" \
 	--audio_path="./assets/audios/cut_liszt_5s.mp3"
 ```
+
+Inference results by using the 100,000 steps checkpoint:
+
+| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  | Ground truth  |
+|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|---------------|
+| Piano Transcription | MAESTRO (199 h)             |  | <video src=> |  |  |
 
 ![Training & Validation Loss](assets/result_loss.png)
 
