@@ -160,8 +160,7 @@ Inference results by using the 100,000 steps checkpoint:
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
-| Piano Transcription | MAESTRO (199 h)             | ![maestro](https://github.com/user-attachments/assets/00a8a61f-4e9d-4544-8524-2ab78f27a62b) | <video src=https://github.com/user-attachments/assets/65297909-ac4d-4abc-a69c-35d870361064> |  |
-
+| Piano Transcription | MAESTRO (199 h)             | ![maestro](https://github.com/user-attachments/assets/00a8a61f-4e9d-4544-8524-2ab78f27a62b) | <video src=https://github.com/user-attachments/assets/65297909-ac4d-4abc-a69c-35d870361064> | <video src=https://github.com/user-attachments/assets/76e4d3f1-ea7d-4c9f-8298-6eb5ce016a84> |
 
 ## 2. Train on Multiple GPUs.
 
@@ -177,13 +176,9 @@ Loss comparison between training with 1 GPU and 4 GPUs. The training will speed 
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
 | ASR                 | LibriSpeech (size: 1,000 h) | ![4gpus_train](https://github.com/user-attachments/assets/0dd9aba3-979a-48c4-82fd-fa7914842cb3) | ![4gpus_test](https://github.com/user-attachments/assets/60793e3d-9990-4d3b-83b3-b47c3f4912ff) |
 
-
-
-
-
 ## External links
 
-The Llama model code is from: https://github.com/qiuqiangkong/mini_llm
+The Llama model code is from: https://github.com/qiuqiangkong/mini_llm/blob/main/models/llama.py
 
 ## License
 
