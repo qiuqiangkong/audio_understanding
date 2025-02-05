@@ -104,18 +104,22 @@ librispeech (60 GB)
 └── SPEAKERS.TXT
 </pre>
 
-```python
-# Train (Takes ~8 hours on 1 RTX4090 to train for 100,000 steps)
-CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/asr_librispeech.yaml"
+Train (Takes \~8 hours on 1 RTX4090 to train for 100,000 steps)
 
-# Inference
+```python
+CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/asr_librispeech.yaml"
+```
+
+Inference
+
+```python
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/asr_librispeech.yaml" \
 	--ckpt_path="./checkpoints/train/asr_librispeech/step=100000.pth" \
 	--audio_path="./assets/audios/librispeech_1688-142285-0000.flac"
 ```
 
-Inference results by using the 100,000 steps checkpoint:
+Results
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
@@ -139,18 +143,22 @@ clotho (7.3 GB)
 └── LICENSE
 </pre>
 
-```python
-# Train (takes ~8 hours on 1 RTX4090 to train for 100,000 steps)
-CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/audio_caption_clotho.yaml"
+Train (takes \~8 hours on 1 RTX4090 to train for 100,000 steps)
 
-# Inference
+```python
+CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/audio_caption_clotho.yaml"
+```
+
+Inference
+
+```python
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/audio_caption_clotho.yaml" \
 	--ckpt_path="./checkpoints/train/audio_caption_clotho/step=100000.pth" \
 	--audio_path="./assets/audios/clotho_birds_long.wav"
 ```
 
-Inference results by using the 100,000 steps checkpoint:
+Results
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
@@ -182,18 +190,22 @@ maestro-v3.0.0 (131 GB)
 └── README
 </pre>
 
-```python
-# Train (takes ~8 hours on 1 RTX4090 to train for 100,000 steps)
-CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/piano_transcription_maestro.yaml"
+Train (takes \~8 hours on 1 RTX4090 to train for 100,000 steps)
 
-# Inference
+```python
+CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/piano_transcription_maestro.yaml"
+```
+
+Inference
+
+```python
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/piano_transcription_maestro.yaml" \
 	--ckpt_path="./checkpoints/train/piano_transcription_maestro/step=100000.pth" \
 	--audio_path="./assets/audios/cut_liszt_5s.mp3"
 ```
 
-Inference results by using the 100,000 steps checkpoint:
+Results
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
