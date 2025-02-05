@@ -1,4 +1,4 @@
-# Music Generation/TTS with Large Language Models
+# Audio Understanding with Large Language Models
 
 This repository contains a tutorial of building audio understanding systems with large language models (LLMs). The audio understanding tasks include automatic speech recogntion (ASR), audio caption, audio query answering, music transcription, etc. The repository is written in PyTorch. All tasks are formatted to a same format with tuples of audio, question, and answering as input. An audio understanding system consists of an audio encoder and an LLM decoder. When loading pretrained audio encoders and train LLM decoders from scratch, users can train an audio understanding system in less than 10 hours using a single RTX 4090 GPU.
 
@@ -46,7 +46,8 @@ Results
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                      |Output   | Ground truth  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|---------|---------------|
-| Music Tagging       | GTZAN (size: 8 h)           | ![gtzan](https://github.com/user-attachments/assets/2966581f-c53b-4ab6-982d-1617531baeca)  | <video src=https://github.com/user-attachments/assets/56d24ec6-ad08-424b-8bd1-f400a9a8abe5> |blues    | blues         |
+| Music Tagging       | GTZAN (size: 8 h)           | ![gtzan](https://github.com/user-attachments/assets/b20dfb54-161a-47b1-bf3d-ab836d4ee974) | <video src=https://github.com/user-attachments/assets/56d24ec6-ad08-424b-8bd1-f400a9a8abe5> |blues    | blues         |
+
 
 
 
