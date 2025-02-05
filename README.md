@@ -122,6 +122,19 @@ Inference results by using the 100,000 steps checkpoint:
 bash ./scripts/download_clotho.sh
 ```
 
+The downloaded dataset after compression looks like:
+
+<pre>
+clotho (7.3 GB)
+├── clotho_audio_development (2894 wavs)
+├── clotho_audio_evaluation (1046 wavs)
+├── clotho_captions_development.csv
+├── clotho_captions_evaluation.csv
+├── clotho_metadata_development.csv
+├── clotho_metadata_evaluation.csv
+└── LICENSE
+</pre>
+
 ```python
 # Train (takes ~8 hours on 1 RTX4090 to train for 100,000 steps)
 CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/audio_caption_clotho.yaml"
@@ -144,6 +157,24 @@ Inference results by using the 100,000 steps checkpoint:
 ```bash
 bash ./scripts/download_maestro.sh
 ```
+
+The downloaded dataset after compression looks like:
+
+maestro-v3.0.0 (131 GB)
+├── 2004 (132 songs, wav + flac + midi + tsv)
+├── 2006 (115 songs, wav + flac + midi + tsv)
+├── 2008 (147 songs, wav + flac + midi + tsv)
+├── 2009 (125 songs, wav + flac + midi + tsv)
+├── 2011 (163 songs, wav + flac + midi + tsv)
+├── 2013 (127 songs, wav + flac + midi + tsv)
+├── 2014 (105 songs, wav + flac + midi + tsv)
+├── 2015 (129 songs, wav + flac + midi + tsv)
+├── 2017 (140 songs, wav + flac + midi + tsv)
+├── 2018 (93 songs, wav + flac + midi + tsv)
+├── LICENSE
+├── maestro-v3.0.0.csv
+├── maestro-v3.0.0.json
+└── README
 
 ```python
 # Train (takes ~8 hours on 1 RTX4090 to train for 100,000 steps)

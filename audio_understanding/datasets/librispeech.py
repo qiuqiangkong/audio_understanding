@@ -33,7 +33,7 @@ class LibriSpeech(Dataset):
 
     The dataset looks like:
 
-        librispeech (1.3 GB)
+        librispeech (60 GB)
         ├── dev-clean (40 folders)
         │   ├── 1272 (3 folders)
         │   │   ├── 128104
