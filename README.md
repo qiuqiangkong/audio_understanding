@@ -72,7 +72,7 @@ Inference results by using the 100,000 steps checkpoint:
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  | Ground truth  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|---------------|
-| ASR                 | LibriSpeech (size: 1,000 h) |  | <video src=> | there ' s ion they say in all blood and a grain or two perhaps is good but he makes me harshly feel has got a little too much of steel an little too much of steel anon | THERE'S IRON THEY SAY IN ALL OUR BLOOD AND A GRAIN OR TWO PERHAPS IS GOOD BUT HIS HE MAKES ME HARSHLY FEEL HAS GOT A LITTLE TOO MUCH OF STEEL ANON |
+| ASR                 | LibriSpeech (size: 1,000 h) | ![librispeech](https://github.com/user-attachments/assets/e8b1edef-0bc6-4772-a4a8-7462380e7dd1) | <video src=https://github.com/user-attachments/assets/f14973a9-8d2a-4658-929f-b9d71ed9d216> | there ' s ion they say in all blood and a grain or two perhaps is good but he makes me harshly feel has got a little too much of steel an little too much of steel anon | THERE'S IRON THEY SAY IN ALL OUR BLOOD AND A GRAIN OR TWO PERHAPS IS GOOD BUT HIS HE MAKES ME HARSHLY FEEL HAS GOT A LITTLE TOO MUCH OF STEEL ANON |
 
 ### 1.3 Audio Caption
 ```bash
@@ -94,7 +94,14 @@ Inference results by using the 100,000 steps checkpoint:
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  | Ground truth  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|---------------|
-| Audio Caption       | Clotho (size: 24 h)         |  | <video src=> | birds are buzzing by birds chirping in the background and a few people speak. | a variety of birds are chirping while the birds are chirping in the background and the birds are chirping loudly. |
+| Audio Caption       | Clotho (size: 24 h)         | ![clotho](https://github.com/user-attachments/assets/b269a4e3-fcd9-4bf4-a79a-613f60fa6ae4) | <video src=https://github.com/user-attachments/assets/696a7fd8-f738-4002-bc90-fe9275a143a6> | birds are buzzing by birds chirping in the background and a few people speak. | a variety of birds are chirping while the birds are chirping in the background and the birds are chirping loudly. |
+
+
+
+
+
+
+
 
 ### 1.4 Piano Transcription
 ```bash
@@ -116,9 +123,7 @@ Inference results by using the 100,000 steps checkpoint:
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  | Ground truth  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|---------------|
-| Piano Transcription | MAESTRO (199 h)             |  | <video src=> |  |  |
-
-![Training & Validation Loss](assets/result_loss.png)
+| Piano Transcription | MAESTRO (199 h)             | ![maestro](https://github.com/user-attachments/assets/00a8a61f-4e9d-4544-8524-2ab78f27a62b) | <video src=https://github.com/user-attachments/assets/65297909-ac4d-4abc-a69c-35d870361064> |  |  |
 
 ## 2. Train on Multiple GPUs.
 
