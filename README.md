@@ -71,7 +71,7 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 Inference results by using the 100,000 steps checkpoint:
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
-|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|---------------|
+|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
 | ASR                 | LibriSpeech (size: 1,000 h) | ![librispeech](https://github.com/user-attachments/assets/e8b1edef-0bc6-4772-a4a8-7462380e7dd1) | <video src=https://github.com/user-attachments/assets/f14973a9-8d2a-4658-929f-b9d71ed9d216> | there ' s ion they say in all blood and a grain or two perhaps is good but he makes me harshly feel has got a little too much of steel an little too much of steel anon |
 
 ### 1.3 Audio Caption
