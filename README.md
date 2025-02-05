@@ -46,7 +46,11 @@ Results
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                      |Output   | Ground truth  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------|---------|---------------|
-| Music Tagging       | GTZAN (size: 8 h)           | ![gtzan](https://github.com/user-attachments/assets/b20dfb54-161a-47b1-bf3d-ab836d4ee974) | <video src=https://github.com/user-attachments/assets/56d24ec6-ad08-424b-8bd1-f400a9a8abe5> |blues    | blues         |
+| Music Tagging       | GTZAN (size: 8 h)           | ![gtzan](https://github.com/user-attachments/assets/b20dfb54-161a-47b1-bf3d-ab836d4ee974) | <video src=https://github.com/user-attachments/assets/3525bf28-59f6-49f0-b6b6-de86d86c719f> |blues    | blues         |
+
+
+
+
 
 
 
