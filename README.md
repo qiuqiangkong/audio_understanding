@@ -44,9 +44,9 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 
 Results
 
-| Task                | Training Dataset            | Test audio                                                              | Output                                                                                                                                               | Ground truth                                                                                                                                       |
+| Task                | Training Dataset            | Loss                                                              | Output                                                                                                                                               | Ground truth                                                                                                                                       |
 |---------------------|-----------------------------|-------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------| ---------------------------------------------------------------------------------------------------------------------------------------------------|
-| Music Tagging       | GTZAN (size: 8 h)           |                                                                         | blues                                                                                                                                                | blues                                                                                                                                              |
+| Music Tagging       | GTZAN (size: 8 h)           | ![gtzan](https://github.com/user-attachments/assets/2966581f-c53b-4ab6-982d-1617531baeca)                  | blues                                                                                                                                                | blues                                                                                                                                              |
 
 ### 1.2 Automatic speech recognition (ASR)
 
@@ -120,6 +120,7 @@ After training on 1 RTX4090 GPU for 100,000 stesp in 10 hours, the sampled audio
 | ASR                 | LibriSpeech (size: 1,000 h) |                                                                          | there ' s iron they say in all our blood and a grain or two perhaps is good but his he makes me harshly feel has got a little too much of steel anon | THERE'S IRON THEY SAY IN ALL OUR BLOOD AND A GRAIN OR TWO PERHAPS IS GOOD BUT HIS HE MAKES ME HARSHLY FEEL HAS GOT A LITTLE TOO MUCH OF STEEL ANON |
 | Audio Caption       | Clotho (size: 24 h)         |                                                                          | a variety of birds are chirping while the birds are chirping in the background and the birds are chirping loudly.                                    | bird is chirping continuously as time goes on.                                                                                                     |
 | Piano Transcription | MAESTRO (199 h)             |                                                                          | 
+
 
 
 
