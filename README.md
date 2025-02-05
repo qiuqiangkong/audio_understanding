@@ -132,7 +132,10 @@ Loss comparison between training with 1 GPU and 4 GPUs:
 
 | Task                | Training Dataset            | Train loss                                                                                       | Test loss                                                                                 |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
-| ASR                 | LibriSpeech (size: 1,000 h) | | |
+| ASR                 | LibriSpeech (size: 1,000 h) | ![4gpus_train](https://github.com/user-attachments/assets/0dd9aba3-979a-48c4-82fd-fa7914842cb3) | ![4gpus_test](https://github.com/user-attachments/assets/60793e3d-9990-4d3b-83b3-b47c3f4912ff) |
+
+
+
 
 
 ## External links
