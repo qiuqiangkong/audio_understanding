@@ -64,7 +64,7 @@ CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/asr_librispeech.yaml"
 # Inference
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/asr_librispeech.yaml" \
-	--ckpt_path="./checkpoints/train/asr_librispeech/step=20000.pth" \
+	--ckpt_path="./checkpoints/train/asr_librispeech/step=100000.pth" \
 	--audio_path="./assets/audios/librispeech_1688-142285-0000.flac"
 ```
 
@@ -72,7 +72,7 @@ Inference results by using the 100,000 steps checkpoint:
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
-| ASR                 | LibriSpeech (size: 1,000 h) | ![librispeech](https://github.com/user-attachments/assets/e8b1edef-0bc6-4772-a4a8-7462380e7dd1) | <video src=https://github.com/user-attachments/assets/f14973a9-8d2a-4658-929f-b9d71ed9d216> | there ' s ion they say in all blood and a grain or two perhaps is good but he makes me harshly feel has got a little too much of steel an little too much of steel anon |
+| ASR                 | LibriSpeech (size: 1,000 h) | ![librispeech](https://github.com/user-attachments/assets/e8b1edef-0bc6-4772-a4a8-7462380e7dd1) | <video src=https://github.com/user-attachments/assets/f14973a9-8d2a-4658-929f-b9d71ed9d216> | there ' s iron they say in all our blood and a grain or two perhaps is good but his he makes me harshly feel has got a little too much of steel anon |
 
 ### 1.3 Audio Caption
 ```bash
@@ -86,7 +86,7 @@ CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/audio_caption_clotho.
 # Inference
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/audio_caption_clotho.yaml" \
-	--ckpt_path="./checkpoints/train/audio_caption_clotho/step=20000.pth" \
+	--ckpt_path="./checkpoints/train/audio_caption_clotho/step=100000.pth" \
 	--audio_path="./assets/audios/clotho_birds_long.wav"
 ```
 
@@ -94,7 +94,7 @@ Inference results by using the 100,000 steps checkpoint:
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
-| Audio Caption       | Clotho (size: 24 h)         | ![clotho](https://github.com/user-attachments/assets/b269a4e3-fcd9-4bf4-a79a-613f60fa6ae4) | <video src=https://github.com/user-attachments/assets/696a7fd8-f738-4002-bc90-fe9275a143a6> | birds are buzzing by birds chirping in the background and a few people speak. |
+| Audio Caption       | Clotho (size: 24 h)         | ![clotho](https://github.com/user-attachments/assets/b269a4e3-fcd9-4bf4-a79a-613f60fa6ae4) | <video src=https://github.com/user-attachments/assets/696a7fd8-f738-4002-bc90-fe9275a143a6> | birds chirping and a passing of a car outdoors |
 
 
 ### 1.4 Piano Transcription
@@ -109,7 +109,7 @@ CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/piano_transcription_m
 # Inference
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/piano_transcription_maestro.yaml" \
-	--ckpt_path="./checkpoints/train/piano_transcription_maestro/step=20000.pth" \
+	--ckpt_path="./checkpoints/train/piano_transcription_maestro/step=100000.pth" \
 	--audio_path="./assets/audios/cut_liszt_5s.mp3"
 ```
 
