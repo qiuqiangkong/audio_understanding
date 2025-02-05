@@ -7,3 +7,5 @@ pip install audidata==0.0.3
 pip install librosa==0.10.2
 pip install descript-audio-codec
 pip install transformers==4.45.2
+pip install panns_inference==0.1.0
+pip install pretty_midi==0.2.10

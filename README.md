@@ -48,18 +48,22 @@ gtzan (1.3 GB)
     └── rock (100 files)
 </pre>
 
-```python
-# Train (Takes ~3 hours on 1 RTX4090 to train for 100,000 steps)
-CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/music_tagging_gtzan.yaml"
+Train (Takes \~3 hours on 1 RTX4090 to train for 100,000 steps)
 
-# Inference
+```python
+CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/music_tagging_gtzan.yaml"
+```
+
+Inference
+
+```python
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/music_tagging_gtzan.yaml" \
 	--ckpt_path="./checkpoints/train/music_tagging_gtzan/step=100000.pth" \
 	--audio_path="./assets/audios/gtzan_blues.00002.au"
 ```
 
-Inference results by using the 100,000 steps checkpoint:
+Results
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output   |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|----------|
@@ -160,6 +164,7 @@ bash ./scripts/download_maestro.sh
 
 The downloaded dataset after compression looks like:
 
+<pre>
 maestro-v3.0.0 (131 GB)
 ├── 2004 (132 songs, wav + flac + midi + tsv)
 ├── 2006 (115 songs, wav + flac + midi + tsv)
@@ -175,6 +180,7 @@ maestro-v3.0.0 (131 GB)
 ├── maestro-v3.0.0.csv
 ├── maestro-v3.0.0.json
 └── README
+</pre>
 
 ```python
 # Train (takes ~8 hours on 1 RTX4090 to train for 100,000 steps)
