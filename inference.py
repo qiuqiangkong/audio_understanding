@@ -101,7 +101,7 @@ def get_top_k(config_yaml: str) -> int:
         return 1
 
     elif Path(config_yaml).stem in ["piano_transcription_maestro"]:
-        return 20
+        return 1
 
     elif Path(config_yaml).stem in ["audio_caption_clotho"]:
         return 100

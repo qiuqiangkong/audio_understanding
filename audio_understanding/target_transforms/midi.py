@@ -127,21 +127,30 @@ class MIDI2Tokens:
         # E.g., ["time_index=56", 'name=note_offset', "pitch=44"]
 
         # Pad 0 for sort
-        sorted_tokens = [self.zero_pad_string(token) for token in sorted_tokens]
+        extended_tokens = [self.extend_token(token) for token in sorted_tokens]
         # E.g., ["time_index=000056", 'name=note_offset', "pitch=000044"]
 
-        key = ",".join(sorted_tokens)
-        # E.g., "time_index=000056,name=note_offset,pitch=000044"
+        key = ",".join(extended_tokens)
+        # E.g., "time_index=000056,name=00_note_offset,pitch=000044"
 
         return key, event
 
-    def zero_pad_string(self, token: str) -> str:
+    def extend_token(self, token: str) -> str:
         r"""Left pad values for sorting."""
+
         key, value = token.split("=")
-        if value.isdigit():
+
+        if value == "note_offset":
+            return "{}=00_{}".format(key, value)
+
+        elif value == "note_onset":
+            return "{}=01_{}".format(key, value)
+
+        elif value.isdigit():
             return "{}={:06d}".format(key, int(value))
+
         else:
-            return token
+            raise NotImplementedError(token)
 
     def flat_events(self, events: list[list[str]]) -> list[str]:
 

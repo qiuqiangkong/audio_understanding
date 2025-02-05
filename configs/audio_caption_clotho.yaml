@@ -6,12 +6,12 @@ max_answering_len: 100
 
 train_datasets:
     Clotho:
-        root: "/datasets/clotho"
+        root: "./datasets/clotho"
         split: "train"
 
 test_datasets:
     Clotho:
-        root: "/datasets/clotho"
+        root: "./datasets/clotho"
         split: "test"
         
 audio_encoder:

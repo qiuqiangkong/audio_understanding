@@ -197,7 +197,6 @@ def train(args) -> None:
 
         if step == configs["train"]["training_steps"]:
             break
-
         
 def get_dataset(
     configs: dict, 

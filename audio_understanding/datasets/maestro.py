@@ -210,6 +210,7 @@ class MAESTRO(Dataset):
             "pedal": pedals,
             "start_time": start_time, 
             "duration": duration,
+            "midi_path": midi_path
         }
         
         # Transform target

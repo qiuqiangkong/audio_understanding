@@ -6,12 +6,12 @@ max_answering_len: 100
 
 train_datasets:
     LibriSpeech:
-        root: "/datasets/librispeech"
+        root: "./datasets/LibriSpeech"
         split: "train"
 
 test_datasets:
     LibriSpeech:
-        root: "/datasets/librispeech"
+        root: "./datasets/LibriSpeech"
         split: "test"
         
 audio_encoder:

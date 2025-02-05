@@ -6,12 +6,12 @@ max_answering_len: 100
 
 train_datasets:
     GTZAN:
-        root: "/datasets/gtzan"
+        root: "./datasets/gtzan"
         split: "train"
 
 test_datasets:
     GTZAN:
-        root: "/datasets/gtzan"
+        root: "./datasets/gtzan"
         split: "test"
         
 audio_encoder:

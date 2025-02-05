@@ -2,7 +2,7 @@
 
 This repository contains a tutorial of building audio understanding systems with large language models (LLMs). The audio understanding tasks include automatic speech recogntion (ASR), audio caption, audio query answering, music transcription, etc. The repository is written in PyTorch. All tasks are formatted to a same format with tuples of audio, question, and answering as input. An audio understanding system consists of an audio encoder and an LLM decoder. When loading pretrained audio encoders and train LLM decoders from scratch, users can train an audio understanding system in less than 10 hours using a single RTX 4090 GPU.
 
-<img src="./assets/llm.png" width="600">
+<img src="./assets/figs/framework.png" width="600">
 
 ## 0. Install dependencies
 
@@ -12,7 +12,7 @@ git clone https://github.com/qiuqiangkong/audio_understanding
 cd audio_understanding
 
 # Install Python environment
-conda create --name music_llm python=3.10
+conda create --name audio_understanding python=3.10
 
 # Activate environment
 conda activate audio_understanding
@@ -21,7 +21,7 @@ conda activate audio_understanding
 bash env.sh
 ```
 
-## 1. Train & Evaluate
+## 1. Train and Inference
 
 ### 1.1 Music tagging
 
@@ -32,15 +32,21 @@ bash ./scripts/download_gtzan.sh
 ```
 
 ```python
-# Train (Takes 15 min on 1 RTX4090 to train for 10,000 steps)
+# Train (Takes ~3 hours on 1 RTX4090 to train for 100,000 steps)
 CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/music_tagging_gtzan.yaml"
 
 # Inference
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/music_tagging_gtzan.yaml" \
-	--ckpt_path="./checkpoints/train/music_tagging_gtzan/step=20000.pth" \
+	--ckpt_path="./checkpoints/train/music_tagging_gtzan/step=100000.pth" \
 	--audio_path="./assets/gtzan_blues.00002.au"
 ```
+
+Results
+
+| Task                | Training Dataset            | Test audio                                                              | Output                                                                                                                                               | Ground truth                                                                                                                                       |
+|---------------------|-----------------------------|-------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------| ---------------------------------------------------------------------------------------------------------------------------------------------------|
+| Music Tagging       | GTZAN (size: 8 h)           |                                                                         | blues                                                                                                                                                | blues                                                                                                                                              |
 
 ### 1.2 Automatic speech recognition (ASR)
 
