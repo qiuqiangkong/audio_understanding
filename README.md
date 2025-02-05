@@ -97,12 +97,6 @@ Inference results by using the 100,000 steps checkpoint:
 | Audio Caption       | Clotho (size: 24 h)         | ![clotho](https://github.com/user-attachments/assets/b269a4e3-fcd9-4bf4-a79a-613f60fa6ae4) | <video src=https://github.com/user-attachments/assets/696a7fd8-f738-4002-bc90-fe9275a143a6> | birds are buzzing by birds chirping in the background and a few people speak. | a variety of birds are chirping while the birds are chirping in the background and the birds are chirping loudly. |
 
 
-
-
-
-
-
-
 ### 1.4 Piano Transcription
 ```bash
 bash ./scripts/download_maestro.sh
@@ -121,9 +115,10 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 
 Inference results by using the 100,000 steps checkpoint:
 
-| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  | Ground truth  |
-|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|---------------|
-| Piano Transcription | MAESTRO (199 h)             | ![maestro](https://github.com/user-attachments/assets/00a8a61f-4e9d-4544-8524-2ab78f27a62b) | <video src=https://github.com/user-attachments/assets/65297909-ac4d-4abc-a69c-35d870361064> |  |  |
+| Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
+|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
+| Piano Transcription | MAESTRO (199 h)             | ![maestro](https://github.com/user-attachments/assets/00a8a61f-4e9d-4544-8524-2ab78f27a62b) | <video src=https://github.com/user-attachments/assets/65297909-ac4d-4abc-a69c-35d870361064> |  |
+
 
 ## 2. Train on Multiple GPUs.
 
@@ -133,41 +128,11 @@ We use Huggingface accelerate library to train the systems on multiple GPUs. tra
 CUDA_VISIBLE_DEVICES=0,1,2,3 accelerate launch --multi_gpu --num_processes 4 train_accelerate.py --config="./configs/asr_librispeech.yaml"
 ```
 
-Then, the training can speed up by 4x times. The code can also train with multiple nodes such as 32 GPUs with 4 nodes.
+Loss comparison between training with 1 GPU and 4 GPUs:
 
-After training on 1 RTX4090 GPU for 100,000 stesp in 10 hours, the sampled audio sounds like:
-
-
-| Task                | Training Dataset            | Input audio                                                              | Output                                                                                                                                               | Ground truth                                                                                                                                       |
-|---------------------|-----------------------------|--------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------| ---------------------------------------------------------------------------------------------------------------------------------------------------|
-| Music Tagging       | GTZAN (size: 8 h)           |                                                                          | blues                                                                                                                                                | blues                                                                                                                                              |
-| ASR                 | LibriSpeech (size: 1,000 h) |                                                                          | there ' s iron they say in all our blood and a grain or two perhaps is good but his he makes me harshly feel has got a little too much of steel anon | THERE'S IRON THEY SAY IN ALL OUR BLOOD AND A GRAIN OR TWO PERHAPS IS GOOD BUT HIS HE MAKES ME HARSHLY FEEL HAS GOT A LITTLE TOO MUCH OF STEEL ANON |
-| Audio Caption       | Clotho (size: 24 h)         |                                                                          | a variety of birds are chirping while the birds are chirping in the background and the birds are chirping loudly.                                    | bird is chirping continuously as time goes on.                                                                                                     |
-| Piano Transcription | MAESTRO (199 h)             |                                                                          | 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+| Task                | Training Dataset            | Train loss                                                                                       | Test loss                                                                                 |
+|---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|
+| ASR                 | LibriSpeech (size: 1,000 h) | | |
 
 
 ## External links
