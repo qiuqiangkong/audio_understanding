@@ -25,7 +25,7 @@ bash env.sh
 
 ### 1.1 Music tagging
 
-**1.1.1 Download dataset** users need to do download the GTZAN dataset (1.3 GB, 8 hours)
+**1.1.1 Download dataset.** Users need to do download the GTZAN dataset (1.3 GB, 8 hours)
 
 ```bash
 bash ./scripts/download_gtzan.sh
@@ -48,13 +48,13 @@ gtzan (1.3 GB)
     └── rock (100 files)
 </pre>
 
-Train (Takes \~3 hours on 1 RTX4090 to train for 100,000 steps)
+**1.1.2 Train.** Takes \~3 hours on 1 RTX4090 to train for 100,000 steps
 
 ```python
 CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/music_tagging_gtzan.yaml"
 ```
 
-Inference
+**1.1.3 Inference**
 
 ```python
 CUDA_VISIBLE_DEVICES=0 python inference.py \
@@ -63,7 +63,7 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--audio_path="./assets/audios/gtzan_blues.00002.au"
 ```
 
-Results
+**1.1.4 Results**
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output   |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|----------|
