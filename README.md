@@ -265,7 +265,7 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
-| Piano Transcription | MAESTRO (199 h)             | ![maestro](https://github.com/user-attachments/assets/00a8a61f-4e9d-4544-8524-2ab78f27a62b) | <video src=https://github.com/user-attachments/assets/65297909-ac4d-4abc-a69c-35d870361064> | <video src=https://github.com/user-attachments/assets/76e4d3f1-ea7d-4c9f-8298-6eb5ce016a84> |
+| Piano Transcription | MAESTRO (199 h)             | ![maestro](https://github.com/user-attachments/assets/00a8a61f-4e9d-4544-8524-2ab78f27a62b) | <video src=https://github.com/user-attachments/assets/65297909-ac4d-4abc-a69c-35d870361064> | <video src=https://github.com/user-attachments/assets/d0aca6c3-ed3f-412d-8974-0bf9a8d077ee> |
 
 ## 5. Train on Multiple GPUs.
 
