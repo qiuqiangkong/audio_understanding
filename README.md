@@ -23,6 +23,8 @@ bash env.sh
 
 ## 1. Music tagging
 
+Music tagging is a task to predict the tags of an audio clip, such as "classical", "country", and "blues", etc.
+
 ### 1.1 Download dataset
 
 Users need to do download the GTZAN dataset (1.3 GB, 8 hours).
@@ -73,6 +75,8 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 
 
 ## 2. Automatic speech recognition (ASR)
+
+ASR is a task to predict audio of spoken language to texts.
 
 ### 2.1 Download dataset
 
@@ -133,6 +137,8 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 
 ## 3. Audio Caption
 
+Audio caption is a task to predict the captions of an audio.
+
 ### 3.1 Download dataset
 
 Users need to do download the Clotho dataset (7.3 GB, 24 hours)
@@ -179,6 +185,8 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 
 
 ## 4. Piano Transcription
+
+Piano transcription is a task to transcribe audio of a piano playing into a MIDI file. 
 
 ### 4.1 Download dataset
 

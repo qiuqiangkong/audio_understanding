@@ -261,8 +261,11 @@ def get_dataset(
             from audio_understanding.datasets.maestro import MAESTRO
             from audio_understanding.target_transforms.midi import MIDI2Tokens
 
-            CLS = locals()[configs["midi_to_tokens"]]
-            
+            if configs["midi_to_tokens"] == "MIDI2Tokens":
+                midi_transform = MIDI2Tokens(fps=configs["fps"])
+            else:
+                raise NotImplementedError
+
             dataset = MAESTRO(
                 root=configs[datasets_split][name]["root"],
                 split=configs[datasets_split][name]["split"],
@@ -271,7 +274,7 @@ def get_dataset(
                 transform=Mono(),
                 load_target=True,
                 extend_pedal=True,
-                target_transform=[PianoRoll(fps=100, pitches_num=128), CLS(fps=configs["fps"])],
+                target_transform=[PianoRoll(fps=100, pitches_num=128), midi_transform],
             )
             datasets.append(dataset)
 
