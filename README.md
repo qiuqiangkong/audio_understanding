@@ -1,6 +1,6 @@
 # Audio Understanding with Large Language Models
 
-This repository contains a tutorial of building audio understanding systems with large language models (LLMs). The audio understanding tasks include automatic speech recogntion (ASR), audio caption, audio query answering, music transcription, etc. The repository is written in PyTorch. All tasks are formatted to a same format with tuples of audio, question, and answering as input. An audio understanding system consists of an audio encoder and an LLM decoder. When loading pretrained audio encoders and train LLM decoders from scratch, users can train an audio understanding system in less than 10 hours using a single RTX 4090 GPU.
+This repository contains a tutorial of building audio understanding systems with large language models (LLMs). The audio understanding tasks include automatic speech recogntion (ASR), audio caption, audio query answering, music transcription, etc. The repository is written in PyTorch. All tasks are formatted to a same format with tuples of audio, question, and answering as input. An audio understanding system consists of an audio encoder and an LLM decoder. When loading pretrained audio encoders and train LLM decoders from scratch, users can train an audio understanding system in less than 10 hours using a single RTX 4090 GPU. The model framework looks like:
 
 <img src="./assets/figs/framework.png" width="600">
 
@@ -25,7 +25,7 @@ bash env.sh
 
 ### 1.1 Music tagging
 
-To train a music tagging system, users need to do download the GTZAN dataset (1.3 GB, 8 hours)
+**1.1.1 Download dataset** users need to do download the GTZAN dataset (1.3 GB, 8 hours)
 
 ```bash
 bash ./scripts/download_gtzan.sh
@@ -72,7 +72,7 @@ Results
 
 ### 1.2 Automatic speech recognition (ASR)
 
-To train an ASR system, users need to do download the LibriSpeech dataset (1,000 hours)
+To train an ASR system, users need to do download the LibriSpeech dataset (60 GB, 1,000 hours)
 
 ```bash
 bash ./scripts/download_librispeech.sh
@@ -126,6 +126,9 @@ Results
 | ASR                 | LibriSpeech (size: 1,000 h) | ![librispeech](https://github.com/user-attachments/assets/e8b1edef-0bc6-4772-a4a8-7462380e7dd1) | <video src=https://github.com/user-attachments/assets/f14973a9-8d2a-4658-929f-b9d71ed9d216> | there ' s iron they say in all our blood and a grain or two perhaps is good but his he makes me harshly feel has got a little too much of steel anon |
 
 ### 1.3 Audio Caption
+
+To train an audio caption system, users need to do download the Clotho dataset (7.3 GB, 24 hours)
+
 ```bash
 bash ./scripts/download_clotho.sh
 ```
@@ -166,6 +169,9 @@ Results
 
 
 ### 1.4 Piano Transcription
+
+To train a piano transcription system, users need to do download the LibriSpeech dataset (131 GB, 199 hours)
+
 ```bash
 bash ./scripts/download_maestro.sh
 ```

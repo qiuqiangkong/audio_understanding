@@ -2,7 +2,6 @@
 
 # Download dataset
 mkdir -p ./downloaded_datasets/clotho
-
 wget -O ./downloaded_datasets/clotho/clotho_audio_development.7z https://zenodo.org/records/3490684/files/clotho_audio_development.7z?download=1
 wget -O ./downloaded_datasets/clotho/clotho_audio_evaluation.7z https://zenodo.org/records/3490684/files/clotho_audio_evaluation.7z?download=1
 wget -O ./downloaded_datasets/clotho/clotho_captions_development.csv https://zenodo.org/records/3490684/files/clotho_captions_development.csv?download=1
