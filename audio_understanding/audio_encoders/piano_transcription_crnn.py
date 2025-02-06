@@ -26,7 +26,7 @@ class PianoTranscriptionCRnn(nn.Module):
         self.model = PianoTranscription(device="cpu", checkpoint_path=None).model
         self.latent_dim = 88 * 4
 
-    def encode(self, audio: torch.Tensor, train_mode: bool = True) -> torch.Tensor:
+    def encode(self, audio: torch.Tensor, train_mode) -> torch.Tensor:
         r"""Extract audio latent.
 
         Args:

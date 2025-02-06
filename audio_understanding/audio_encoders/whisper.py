@@ -38,7 +38,7 @@ class Whisper(nn.Module):
             persistent=False
         )
 
-    def encode(self, audio: torch.Tensor, train_mode: bool = True) -> torch.Tensor:
+    def encode(self, audio: torch.Tensor, train_mode: bool) -> torch.Tensor:
         r"""Extract audio latent.
 
         Args:

@@ -90,7 +90,7 @@ def train(args) -> None:
 
         # 1.2 Encode audio into latent
         audio = audio.to(device)
-        audio_latent = audio_encoder.encode(audio=audio)  # shape: (b, t, d)
+        audio_latent = audio_encoder.encode(audio=audio, train_mode=True)  # shape: (b, t, d)
 
         # 1.3 Tokenize question text to IDs
         question_ids = tokenizer.texts_to_ids(

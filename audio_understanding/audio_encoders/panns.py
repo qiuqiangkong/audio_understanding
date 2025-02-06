@@ -26,7 +26,7 @@ class PannsCnn14(nn.Module):
         self.model = AudioTagging(checkpoint_path=None, device="cpu").model
         self.latent_dim = 2048
 
-    def encode(self, audio: torch.Tensor, train_mode: bool = True) -> torch.Tensor:
+    def encode(self, audio: torch.Tensor, train_mode: bool) -> torch.Tensor:
         r"""Extract audio latent.
 
         Args:

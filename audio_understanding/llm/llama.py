@@ -222,8 +222,6 @@ class Llama(nn.Module):
             # Append the sampled token to the last seq
             seqs[-1] = torch.cat((seqs[-1], next_id), dim=1)  # shape: (b, t)
 
-        # new_ids = ids[:, input_len:]  # shape: (b, t)
-
         return seqs
 
 

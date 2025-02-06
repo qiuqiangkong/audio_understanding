@@ -60,6 +60,13 @@ CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/music_tagging_gtzan.y
 
 ### 1.3 Inference
 
+Train a music tagging system by yourself or download a pretrained checkpoint:
+
+```bash
+mkdir -p ./checkpoints/train/music_tagging_gtzan
+wget -O ./checkpoints/train/music_tagging_gtzan/step=100000.pth https://huggingface.co/qiuqiangkong/audio_understanding/resolve/main/music_tagging_gtzan_step%3D100000.pth?download=true
+```
+
 ```python
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/music_tagging_gtzan.yaml" \
@@ -122,6 +129,13 @@ CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/asr_librispeech.yaml"
 
 ### 2.3 Inference
 
+Train an ASR system by yourself or download a pretrained checkpoint:
+
+```bash
+mkdir -p ./checkpoints/train/asr_librispeech
+wget -O ./checkpoints/train/asr_librispeech/step=100000.pth https://huggingface.co/qiuqiangkong/audio_understanding/resolve/main/asr_librispeech_step%3D100000.pth?download=true
+```
+
 ```python
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/asr_librispeech.yaml" \
@@ -170,6 +184,13 @@ CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/audio_caption_clotho.
 
 ### 3.3 Inference
 
+Train an audio caption system by yourself or download a pretrained checkpoint:
+
+```bash
+mkdir -p ./checkpoints/train/audio_caption_clotho
+wget -O ./checkpoints/train/audio_caption_clotho/step=100000.pth https://huggingface.co/qiuqiangkong/audio_understanding/resolve/main/audio_caption_clotho_step%3D100000.pth?download=true
+```
+
 ```python
 CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--config="./configs/audio_caption_clotho.yaml" \
@@ -190,7 +211,7 @@ Piano transcription is a task to transcribe audio of a piano playing into a MIDI
 
 ### 4.1 Download dataset
 
-Users need to do download the LibriSpeech dataset (131 GB, 199 hours).
+Users need to do download the Maestro dataset (131 GB, 199 hours).
 
 ```bash
 bash ./scripts/download_maestro.sh
@@ -225,6 +246,13 @@ CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/piano_transcription_m
 ```
 
 ### 4.3 Inference
+
+Train a piano transcription system by yourself or download a pretrained checkpoint:
+
+```bash
+mkdir -p ./checkpoints/train/piano_transcription_maestro
+wget -O ./checkpoints/train/piano_transcription_maestro/step=100000.pth https://huggingface.co/qiuqiangkong/audio_understanding/resolve/main/piano_transcription_maestro_step%3D100000.pth?download=true
+```
 
 ```python
 CUDA_VISIBLE_DEVICES=0 python inference.py \

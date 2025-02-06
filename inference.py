@@ -51,7 +51,7 @@ def inference(args) -> None:
     audio = torch.Tensor(audio[None, None, :]).to(device)  # shape: (b, c, t)
 
     # Encode audio into latent
-    audio_latent = audio_encoder.encode(audio=audio)  # shape: (b, t, d)
+    audio_latent = audio_encoder.encode(audio=audio, train_mode=False)  # shape: (b, t, d)
 
     question = get_question(config_yaml)  # str
     batch_question = [question]  # shape: (b,)
@@ -181,6 +181,9 @@ def tokens_to_midi(tokens: list[str], fps: float, output_path: str) -> None:
                 assert key == "pitch"
                 pitch = int(value)
 
+                if len(note_dict[pitch]) > 0:
+                    note_dict[pitch][-1]["offset_time_index"] = time_index
+
     events = []
 
     for pitch in note_dict.keys():
@@ -189,15 +192,22 @@ def tokens_to_midi(tokens: list[str], fps: float, output_path: str) -> None:
     # Write out MIDI
     track = pretty_midi.Instrument(program=0)
     track.is_drum = False
+
     for e in events:
+        start_time = e["onset_time_index"] / 100
+
         if "offset_time_index" in e.keys():
-            note = pretty_midi.Note(
-                pitch=e["pitch"], 
-                start=e["onset_time_index"] / 100, 
-                end=e["offset_time_index"] / 100, 
-                velocity=e["velocity"]
-            )
-            track.notes.append(note)
+            end_time = e["offset_time_index"] / 100
+        else:
+            end_time = start_time + 0.1
+
+        note = pretty_midi.Note(
+            pitch=e["pitch"], 
+            start=start_time, 
+            end=end_time, 
+            velocity=e["velocity"]
+        )
+        track.notes.append(note)
 
     midi_data = pretty_midi.PrettyMIDI()
     midi_data.instruments.append(track)
