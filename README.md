@@ -65,16 +65,18 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--audio_path="./assets/audios/gtzan_blues.00002.au"
 ```
 
-### Results
+### 1.4 Results
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output   |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|----------|
 | Music Tagging       | GTZAN (size: 8 h)           | ![gtzan](https://github.com/user-attachments/assets/b20dfb54-161a-47b1-bf3d-ab836d4ee974) | <video src=https://github.com/user-attachments/assets/3525bf28-59f6-49f0-b6b6-de86d86c719f> | blues    |
 
 
-### 1.2 Automatic speech recognition (ASR)
+## 2. Automatic speech recognition (ASR)
 
-**1.2.1 Download dataset.** users need to do download the LibriSpeech dataset (60 GB, 1,000 hours)
+### 2.1 Download dataset
+
+Users need to do download the LibriSpeech dataset (60 GB, 1,000 hours).
 
 ```bash
 bash ./scripts/download_librispeech.sh
@@ -106,13 +108,15 @@ librispeech (60 GB)
 └── SPEAKERS.TXT
 </pre>
 
-Train (Takes \~8 hours on 1 RTX4090 to train for 100,000 steps)
+### 2.2 Train 
+
+Takes \~8 hours on 1 RTX4090 to train for 100,000 steps.
 
 ```python
 CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/asr_librispeech.yaml"
 ```
 
-Inference
+### 2.3 Inference
 
 ```python
 CUDA_VISIBLE_DEVICES=0 python inference.py \
@@ -121,15 +125,17 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--audio_path="./assets/audios/librispeech_1688-142285-0000.flac"
 ```
 
-Results
+### 2.4 Results
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
 | ASR                 | LibriSpeech (size: 1,000 h) | ![librispeech](https://github.com/user-attachments/assets/e8b1edef-0bc6-4772-a4a8-7462380e7dd1) | <video src=https://github.com/user-attachments/assets/f14973a9-8d2a-4658-929f-b9d71ed9d216> | there ' s iron they say in all our blood and a grain or two perhaps is good but his he makes me harshly feel has got a little too much of steel anon |
 
-### 1.3 Audio Caption
+## 3. Audio Caption
 
-To train an audio caption system, users need to do download the Clotho dataset (7.3 GB, 24 hours)
+### 3.1 Download dataset
+
+Users need to do download the Clotho dataset (7.3 GB, 24 hours)
 
 ```bash
 bash ./scripts/download_clotho.sh
@@ -148,13 +154,15 @@ clotho (7.3 GB)
 └── LICENSE
 </pre>
 
-Train (takes \~8 hours on 1 RTX4090 to train for 100,000 steps)
+### 3.2 Train
+
+Takes \~8 hours on 1 RTX4090 to train for 100,000 steps.
 
 ```python
 CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/audio_caption_clotho.yaml"
 ```
 
-Inference
+### 3.3 Inference
 
 ```python
 CUDA_VISIBLE_DEVICES=0 python inference.py \
@@ -163,16 +171,18 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--audio_path="./assets/audios/clotho_birds_long.wav"
 ```
 
-Results
+### 3.4 Results
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
 | Audio Caption       | Clotho (size: 24 h)         | ![clotho](https://github.com/user-attachments/assets/b269a4e3-fcd9-4bf4-a79a-613f60fa6ae4) | <video src=https://github.com/user-attachments/assets/696a7fd8-f738-4002-bc90-fe9275a143a6> | birds chirping and a passing of a car outdoors |
 
 
-### 1.4 Piano Transcription
+## 4. Piano Transcription
 
-To train a piano transcription system, users need to do download the LibriSpeech dataset (131 GB, 199 hours)
+### 4.1 Download dataset
+
+Users need to do download the LibriSpeech dataset (131 GB, 199 hours).
 
 ```bash
 bash ./scripts/download_maestro.sh
@@ -198,13 +208,15 @@ maestro-v3.0.0 (131 GB)
 └── README
 </pre>
 
-Train (takes \~8 hours on 1 RTX4090 to train for 100,000 steps)
+### 4.2 Train
+
+Takes \~8 hours on 1 RTX4090 to train for 100,000 steps
 
 ```python
 CUDA_VISIBLE_DEVICES=0 python train.py --config="./configs/piano_transcription_maestro.yaml"
 ```
 
-Inference
+### 4.3 Inference
 
 ```python
 CUDA_VISIBLE_DEVICES=0 python inference.py \
@@ -213,13 +225,13 @@ CUDA_VISIBLE_DEVICES=0 python inference.py \
 	--audio_path="./assets/audios/cut_liszt_5s.mp3"
 ```
 
-Results
+### 4.4 Results
 
 | Task                | Training Dataset            | Loss                                                                                       | Test audio                                                                                 | Output  |
 |---------------------|-----------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------|---------|
 | Piano Transcription | MAESTRO (199 h)             | ![maestro](https://github.com/user-attachments/assets/00a8a61f-4e9d-4544-8524-2ab78f27a62b) | <video src=https://github.com/user-attachments/assets/65297909-ac4d-4abc-a69c-35d870361064> | <video src=https://github.com/user-attachments/assets/76e4d3f1-ea7d-4c9f-8298-6eb5ce016a84> |
 
-## 2. Train on Multiple GPUs.
+## 5. Train on Multiple GPUs.
 
 We use Huggingface accelerate library to train the systems on multiple GPUs. train_accelerate.py just adds a few lines to train.py. Here is an example to run with 4 GPUs:
 
